@@ -18,6 +18,7 @@ import {
   Container,
   Autocomplete,
   Box,
+  Typography,
 } from "@mui/material";
 import "./Aexport.css";
 import { apisroot } from "./URL";
@@ -105,24 +106,70 @@ export default function StudentSearchExport() {
 
   const handleKey = () => {
     const newError = {};
-  
+
     if (!filters.department_id) newError.department_id = true;
     if (!filters.classroms) newError.classroms = true;
     if (!filters.student) newError.student = true;
-  
+
     setError(newError);
-  
+
     if (Object.keys(newError).length === 0) {
       handleSearch(); // ✅ ไปค้นหา
     }
   };
-  
-  
+  const allowedValues = ["0", "1", "2", "3", "4", "I"];
 
+  const handleKeyDownScore = (e) => {
+    const key = e.key.toUpperCase();
+
+    // ✅ ถ้ากด Backspace → ลบตัวสุดท้าย (พร้อม , ถ้ามี)
+    if (key === "BACKSPACE") {
+      e.preventDefault();
+      let current = filters.score;
+
+      // ลบ , ถ้ามีท้าย
+      if (current.endsWith(",")) {
+        current = current.slice(0, -1);
+      }
+
+      // ลบตัวสุดท้าย
+      current = current.slice(0, -1);
+
+      // ถ้ามีข้อความค้างอยู่ → ใส่ , ท้ายใหม่
+
+      setFilters({ ...filters, score: current });
+      return;
+    }
+
+    // ✅ ถ้า key ไม่ใช่ที่อนุญาต → ไม่ให้พิมพ์
+    if (!allowedValues.includes(key)) {
+      e.preventDefault();
+      return;
+    }
+
+    // ✅ ถ้าถูกต้อง → เติม key และ ,
+    e.preventDefault();
+    const updated = filters.score + key + ",";
+
+    setFilters({ ...filters, score: updated });
+  };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, background: "#eae7e798" }}>
-      <Grid container spacing={2} mt={2} sx={{display: "flex", justifyContent: "center"}}>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <Typography
+          sx={{ fontSize: "24px", fontWeight: "bold" }}
+          fontFamily={"NotoSansLaoLooped"}
+        >
+          Search Scores
+        </Typography>
+      </Box>
+      <Grid
+        container
+        spacing={2}
+        mt={2}
+        sx={{ display: "flex", justifyContent: "center" }}
+      >
         <Grid item xs={12} md={4}>
           <Select
             fullWidth
@@ -138,7 +185,6 @@ export default function StudentSearchExport() {
               });
               setData([]);
               setError({ ...error, department_id: false });
-
             }}
             displayEmpty
             error={error.department_id}
@@ -172,7 +218,7 @@ export default function StudentSearchExport() {
             sx={{ width: "200px" }}
             renderInput={(params) => (
               <TextField
-              fullWidth
+                fullWidth
                 {...params}
                 label="Classroom"
                 error={error.classroms}
@@ -194,15 +240,16 @@ export default function StudentSearchExport() {
               setData([]);
               setError({ ...error, student: false });
             }}
-            sx={{ width: "250px" }}
+            sx={{ width: "250px", fontFamily: "NotoSansLaoLooped" }} // ✅ ที่นี่
             renderInput={(params) => (
               <TextField
-              fullWidth
+                fullWidth
                 {...params}
                 label="Student"
                 error={error.student}
                 helperText={error.student ? "Please select a student" : ""}
                 onKeyDown={handleKeyDownS}
+                sx={{ fontFamily: "NotoSansLaoLooped" }} // ✅ และที่นี่
               />
             )}
           />
@@ -229,10 +276,10 @@ export default function StudentSearchExport() {
                 />
               ))
             }
-            sx={{width: "100%"}}
+            sx={{ width: "100%" }}
             renderInput={(params) => (
               <TextField
-              fullWidth
+                fullWidth
                 {...params}
                 label="ວິຊາ"
                 placeholder="ເລືອກ ວິຊາ"
@@ -256,24 +303,31 @@ export default function StudentSearchExport() {
               />
             )}
           />
-          <input type="hidden" name="subject" value={selectedSubjects.join(",")} />
+          <input
+            type="hidden"
+            name="subject"
+            value={selectedSubjects.join(",")}
+          />
         </Grid>
 
         <Grid item xs={12} md={4}>
           <TextField
             fullWidth
-            onKeyDown={handleKeyDownS}
+            sx={{ fontFamily: "NotoSansLaoLooped" }}
             label="Score"
-            placeholder="Score (e.g., 0 or I)"
+            placeholder="0,1,2,3,4,I"
             value={filters.score}
-            onChange={(e) => {
-              setFilters({ ...filters, score: e.target.value });
-              setData([]);
-            }}
+            onKeyDown={handleKeyDownScore}
+            onChange={() => {}} // ไม่ต้องใช้ เพราะจัดการใน onKeyDown
           />
         </Grid>
 
-        <Grid item xs={12} md={4} sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <Grid
+          item
+          xs={12}
+          md={4}
+          sx={{ display: "flex", justifyContent: "center", mt: 2 }}
+        >
           <Button variant="contained" onClick={handleKey}>
             Search
           </Button>
@@ -286,7 +340,7 @@ export default function StudentSearchExport() {
         </Box>
       ) : (
         <TableContainer component={Paper} sx={{ mt: 4, mb: 4 }}>
-          <Table>
+          <Table fontFamily={"NotoSansLaoLooped"}>
             <TableHead>
               <TableRow>
                 <TableCell>NO.</TableCell>
@@ -297,9 +351,21 @@ export default function StudentSearchExport() {
             <TableBody>
               {data.map((row, i) => (
                 <TableRow key={i}>
-                  <TableCell>{i + 1}</TableCell>
-                  <TableCell>{row.SubName}</TableCell>
-                  <TableCell>{row.score}</TableCell>
+                  <TableCell>
+                    <Typography fontFamily={"NotoSansLaoLooped"}>
+                      {i + 1}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography fontFamily={"NotoSansLaoLooped"}>
+                      {row.SubName}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography fontFamily={"NotoSansLaoLooped"}>
+                      {row.score}
+                    </Typography>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
