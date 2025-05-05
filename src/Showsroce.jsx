@@ -276,7 +276,7 @@ export default function StudentSearchExport() {
                 />
               ))
             }
-            sx={{ width: "100%" }}
+            sx={{ width: "300px" }}
             renderInput={(params) => (
               <TextField
                 fullWidth
