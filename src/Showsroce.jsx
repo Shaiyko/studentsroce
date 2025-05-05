@@ -188,6 +188,7 @@ export default function StudentSearchExport() {
             }}
             displayEmpty
             error={error.department_id}
+            sx={{ width: "300px" }}
           >
             <MenuItem value="">-- Select Department --</MenuItem>
             {departments.map((dep) => (
@@ -215,7 +216,7 @@ export default function StudentSearchExport() {
               setData([]);
               setError({ ...error, classroms: false });
             }}
-            sx={{ width: "200px" }}
+            sx={{ width: "300px" }}
             renderInput={(params) => (
               <TextField
                 fullWidth
@@ -240,7 +241,7 @@ export default function StudentSearchExport() {
               setData([]);
               setError({ ...error, student: false });
             }}
-            sx={{ width: "250px", fontFamily: "NotoSansLaoLooped" }} // ✅ ที่นี่
+            sx={{ width: "300px", fontFamily: "NotoSansLaoLooped" }} // ✅ ที่นี่
             renderInput={(params) => (
               <TextField
                 fullWidth
@@ -313,7 +314,8 @@ export default function StudentSearchExport() {
         <Grid item xs={12} md={4}>
           <TextField
             fullWidth
-            sx={{ fontFamily: "NotoSansLaoLooped" }}
+            
+            sx={{ fontFamily: "NotoSansLaoLooped",width: "300px" }}
             label="Score"
             placeholder="0,1,2,3,4,I"
             value={filters.score}
