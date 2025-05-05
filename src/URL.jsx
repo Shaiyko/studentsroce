@@ -1,0 +1,1 @@
+export const apisroot = `https://apisroce.onrender.com`;
