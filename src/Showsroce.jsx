@@ -320,7 +320,7 @@ export default function StudentSearchExport() {
             placeholder="0,1,2,3,4,I"
             value={filters.score}
             onKeyDown={handleKeyDownScore}
-            onChange={() => {}} // ไม่ต้องใช้ เพราะจัดการใน onKeyDown
+            onChange={handleKeyDownScore} // ไม่ต้องใช้ เพราะจัดการใน onKeyDown
           />
         </Grid>
 
