@@ -19,10 +19,13 @@ import {
   Autocomplete,
   Box,
   Typography,
+  Tooltip,
+  IconButton,
+  Popover,
 } from "@mui/material";
 import "./Aexport.css";
 import { apisroot } from "./URL";
-
+import YourComponent from "./YourComponent";
 export default function StudentSearchExport() {
   const [departments, setDepartments] = useState([]);
   const [classroom, setClassroom] = useState([]);
@@ -33,14 +36,15 @@ export default function StudentSearchExport() {
     student: "",
     subject: "",
     score: "",
-    classroms: "",
+    classrooms: "", // ✅ แก้จาก classroms → classrooms
   });
+  
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [error, setError] = useState({});
-
+  //****************************** */
   useEffect(() => {
     setLoading(true);
     axios
@@ -64,13 +68,13 @@ export default function StudentSearchExport() {
   }, [filters.department_id]);
 
   useEffect(() => {
-    if (filters.department_id && filters.classroms) {
+    if (filters.department_id && filters.classrooms) {
       setLoading(true);
       axios
         .get(`${apisroot}/api/department-data`, {
           params: {
             department_id: filters.department_id,
-            classroms: filters.classroms,
+            classroms: filters.classrooms,
           },
         })
         .then((res) => {
@@ -80,7 +84,7 @@ export default function StudentSearchExport() {
         .catch((err) => console.error(err))
         .finally(() => setLoading(false));
     }
-  }, [filters.department_id, filters.classroms]);
+  }, [filters.department_id, filters.classrooms]);
 
   useEffect(() => {
     setFilters((prev) => ({
@@ -108,7 +112,7 @@ export default function StudentSearchExport() {
     const newError = {};
 
     if (!filters.department_id) newError.department_id = true;
-    if (!filters.classroms) newError.classroms = true;
+    if (!filters.classrooms) newError.classroms = true;
     if (!filters.student) newError.student = true;
 
     setError(newError);
@@ -137,12 +141,10 @@ export default function StudentSearchExport() {
     if (current === "") {
       // ตัวแรกไม่ต้องใส่ ,
       current = input;
-    } else if (current.endsWith(",")) {   
+    } else if (current.endsWith(",")) {
       // ถ้าตัวสุดท้ายเป็น , ให้ใส่ค่าที่กดไปเลย
       current += input;
-    } 
-    
-    else {
+    } else {
       // ตัวต่อไป → ใส่ , ก่อนตามด้วยค่าที่กด
       current += `,${input}`;
     }
@@ -174,7 +176,7 @@ export default function StudentSearchExport() {
               setFilters({
                 ...filters,
                 department_id: e.target.value,
-                classroms: "",
+                classrooms: "",
                 student: "",
                 subject: "",
                 score: "",
@@ -195,36 +197,13 @@ export default function StudentSearchExport() {
           </Select>
         </Grid>
 
-        <Grid item xs={12} md={4}>
-          <Autocomplete
-            freeSolo
-            fullWidth
-            options={classroom}
-            value={filters.classroms || ""}
-            onInputChange={(event, newValue) => {
-              setFilters({
-                ...filters,
-                classroms: newValue,
-                student: "",
-                subject: "",
-                score: "",
-              });
-              setData([]);
-              setError({ ...error, classroms: false });
-            }}
-            sx={{ width: "300px" }}
-            renderInput={(params) => (
-              <TextField
-                fullWidth
-                {...params}
-                label="Classroom"
-                error={error.classroms}
-                helperText={error.classroms ? "Please select a classroom" : ""}
-                onKeyDown={handleKeyDownS}
-              />
-            )}
-          />
-        </Grid>
+        <YourComponent
+          classroom={classroom}
+          filters={filters}
+          setFilters={setFilters}
+          error={error}
+          setError={setError}
+        />
 
         <Grid item xs={12} md={4}>
           <Autocomplete
