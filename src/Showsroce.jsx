@@ -119,39 +119,35 @@ export default function StudentSearchExport() {
   };
   const allowedValues = ["0", "1", "2", "3", "4", "I"];
 
-  const handleKeyDownScore = (e) => {
-    const key = e.key.toUpperCase();
-
-    // ✅ ถ้ากด Backspace → ลบตัวสุดท้าย (พร้อม , ถ้ามี)
-    if (key === "BACKSPACE") {
-      e.preventDefault();
-      let current = filters.score;
-
-      // ลบ , ถ้ามีท้าย
-      if (current.endsWith(",")) {
-        current = current.slice(0, -1);
-      }
-
-      // ลบตัวสุดท้าย
-      current = current.slice(0, -1);
-
-      // ถ้ามีข้อความค้างอยู่ → ใส่ , ท้ายใหม่
-
-      setFilters({ ...filters, score: current });
+  const handleScoreChange = (e) => {
+    const input = e.nativeEvent.data?.toUpperCase(); // ตรวจเฉพาะ key ที่กด
+    if (!input) {
+      // กรณีลบ
+      setFilters({ ...filters, score: e.target.value.toUpperCase() });
       return;
     }
 
-    // ✅ ถ้า key ไม่ใช่ที่อนุญาต → ไม่ให้พิมพ์
-    if (!allowedValues.includes(key)) {
-      e.preventDefault();
+    // ตรวจว่า input อยู่ใน allowed
+    if (!allowedValues.includes(input)) {
       return;
     }
 
-    // ✅ ถ้าถูกต้อง → เติม key และ ,
-    e.preventDefault();
-    const updated = filters.score + key + ",";
+    let current = filters.score;
 
-    setFilters({ ...filters, score: updated });
+    if (current === "") {
+      // ตัวแรกไม่ต้องใส่ ,
+      current = input;
+    } else if (current.endsWith(",")) {   
+      // ถ้าตัวสุดท้ายเป็น , ให้ใส่ค่าที่กดไปเลย
+      current += input;
+    } 
+    
+    else {
+      // ตัวต่อไป → ใส่ , ก่อนตามด้วยค่าที่กด
+      current += `,${input}`;
+    }
+
+    setFilters({ ...filters, score: current });
   };
 
   return (
@@ -314,13 +310,11 @@ export default function StudentSearchExport() {
         <Grid item xs={12} md={4}>
           <TextField
             fullWidth
-            
-            sx={{ fontFamily: "NotoSansLaoLooped",width: "300px" }}
+            sx={{ fontFamily: "NotoSansLaoLooped", width: "300px" }}
             label="Score"
             placeholder="0,1,2,3,4,I"
             value={filters.score}
-            onKeyDown={handleKeyDownScore}
-            onChange={handleKeyDownScore} // ไม่ต้องใช้ เพราะจัดการใน onKeyDown
+            onChange={handleScoreChange}
           />
         </Grid>
 
