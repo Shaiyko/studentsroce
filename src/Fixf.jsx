@@ -18,6 +18,8 @@ import {
   Paper,
   Container,
   CircularProgress,
+  TextField,
+  Autocomplete,
 } from "@mui/material";
 import { apisheet } from "./URL";
 
@@ -41,9 +43,7 @@ function SheetManagerC() {
   const handleSelectSpreadsheet = async () => {
     try {
       setLoading(true);
-      const res = await fetch(
-        `${apisheet}/all-sheet-data/${selectedId}`
-      );
+      const res = await fetch(`${apisheet}/all-sheet-data/${selectedId}`);
       const allData = await res.json();
       setAllSheetData(allData);
 
@@ -163,37 +163,37 @@ function SheetManagerC() {
                   alignItems: "flex-start",
                 }}
               >
-                <FormControl fullWidth sx={{ minWidth: 160, maxWidth: 350 }}>
-                  <InputLabel>ເລືອກ ວິຊາ</InputLabel>
-                  <Select
-                    value={filterSubject}
-                    onChange={(e) => setFilterSubject(e.target.value)}
-                    label="ເລືອກ ວິຊາ"
-                  >
-                    <MenuItem value="">-- ທັງໝົດ --</MenuItem>
-                    {subjectOptions.map((sub) => (
-                      <MenuItem key={sub} value={sub}>
-                        {sub}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <Autocomplete
+                  options={subjectOptions}
+                  value={filterSubject}
+                  onChange={(event, newValue) =>
+                    setFilterSubject(newValue || "")
+                  }
+                  renderInput={(params) => (
+                    <TextField {...params} label="ວິຊາ" variant="outlined" />
+                  )}
+                  sx={{ minWidth: 160, maxWidth: 350, width: "100%" }}
+                  clearOnEscape
+                  isOptionEqualToValue={(option, value) => option === value}
+                />
 
-                <FormControl fullWidth sx={{ minWidth: 160, maxWidth: 350 }}>
-                  <InputLabel>ຊື່ ນັກສຶກສາ</InputLabel>
-                  <Select
-                    value={selectedStudent}
-                    onChange={(e) => setSelectedStudent(e.target.value.trim())}
-                    label="ຊື່ ນັກສຶກສາ"
-                  >
-                    <MenuItem value="">-- ທັງໝົດ --</MenuItem>
-                    {studentOptions.map((stu, i) => (
-                      <MenuItem key={i} value={stu}>
-                        {stu}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <Autocomplete
+                  options={studentOptions}
+                  value={selectedStudent}
+                  onChange={(event, newValue) =>
+                    setSelectedStudent(newValue || "")
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="ຊື່ ນັກສຶກສາ"
+                      variant="outlined"
+                    />
+                  )}
+                  sx={{ minWidth: 160, maxWidth: 350, width: "100%" }}
+                  clearOnEscape
+                  isOptionEqualToValue={(option, value) => option === value}
+                />
 
                 <FormControlLabel
                   control={
