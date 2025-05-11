@@ -1,28 +1,40 @@
-
-
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
 } from "react-router-dom";
-import React from "react";
-import StudentSearchExport from './Showsroce';
+import { Box, CssBaseline } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+import StudentSearchExport from "./Showsroce";
 import MyAppBar from "./AppBar";
 import Footer from "./Footer";
-import { Box } from "@mui/material";
+import SheetManagerC from "./Fixf";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "NotoSansLaoLooped, sans-serif",
+  },
+});
+
 function App() {
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-    <MyAppBar />
-      <Router>
-        <Routes>
-          <Route path="/" element={<StudentSearchExport />} />
-          
-        </Routes>
-      </Router>
-      <Footer />
-    </Box>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box
+        sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+      >
+        <Router>
+        <MyAppBar />
+          <Routes>
+            <Route path="/" element={<StudentSearchExport />} />
+            <Route path="/fixf" element={<SheetManagerC />} />
+          </Routes>
+        </Router>
+        <Footer />
+      </Box>
+    </ThemeProvider>
   );
 }
 

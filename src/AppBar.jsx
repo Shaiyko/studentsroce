@@ -3,15 +3,13 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import SV from "./assets/SV.webp";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const MyAppBar = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Sengsavnh Institute Of Business{" "}
-        </Typography>
         <Box
           sx={{
             display: "flex",
@@ -28,6 +26,18 @@ const MyAppBar = () => {
               objectFit: "contain",
             }}
           />
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexGrow: 1,
+            justifyContent: "right",
+            alignItems: "center",
+          }}
+        >
+           <Button color="inherit" component={Link} to="/">ເບີ່ງຄະແນນ</Button>
+            <Button color="inherit" component={Link} to="/fixf">ເກັບໜ່ວຍກິດຄືນ</Button>
+         
         </Box>
       </Toolbar>
     </AppBar>
