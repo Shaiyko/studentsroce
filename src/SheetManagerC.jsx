@@ -238,13 +238,28 @@ function SheetManagerC() {
                     >
                       <Table size="small" sx={{ minWidth: 600 }}>
                         <TableHead>
-                          <TableRow>
-                            {filtered[0].map((cell, i) => (
-                              <TableCell key={i} sx={{ fontWeight: "bold" }}>
-                                {cell}
-                              </TableCell>
-                            ))}
-                          </TableRow>
+                           <TableRow
+                        sx={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          alignContent: "center",
+                          "& th": {
+                            fontFamily: "NotoSansLaoLooped",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                          },
+                        }}
+                      >
+                        <TableCell>ລະຫັດນັກສຶກສາ</TableCell>
+                        <TableCell>ຊື່ ແລະ ນາມສະກຸນ</TableCell>
+                        <TableCell>ເບີໂທ</TableCell>
+                        <TableCell>ວິຊາ</TableCell>
+                        <TableCell>ສົກຮຽນທີ່ຈົບ</TableCell>
+                        <TableCell>ຊັ້ນປີ</TableCell>
+                        <TableCell>ສາຂາ</TableCell>
+                        <TableCell>ຄະແນນ</TableCell>
+                      </TableRow>
                         </TableHead>
                         <TableBody>
                           {filtered.slice(1).map((row, rIdx) => {
