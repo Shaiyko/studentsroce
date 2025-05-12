@@ -10,7 +10,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import StudentSearchExport from "./Showsroce";
 import MyAppBar from "./AppBar";
 import Footer from "./Footer";
-import SheetManagerC from "./Fixf";
+import SheetManagerC from "./SheetManagerC";
 
 const theme = createTheme({
   typography: {
@@ -29,7 +29,7 @@ function App() {
         <MyAppBar />
           <Routes>
             <Route path="/" element={<StudentSearchExport />} />
-            <Route path="/fixf" element={<SheetManagerC />} />
+            <Route path="/sheetmanagerc" element={<SheetManagerC />} />
           </Routes>
         </Router>
         <Footer />

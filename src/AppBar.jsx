@@ -35,9 +35,12 @@ const MyAppBar = () => {
             alignItems: "center",
           }}
         >
-           <Button color="inherit" component={Link} to="/">ເບີ່ງຄະແນນ</Button>
-            <Button color="inherit" component={Link} to="/fixf">ເກັບໜ່ວຍກິດຄືນ</Button>
-         
+          <Button color="inherit" component={Link} to="/">
+            ເບີ່ງຄະແນນ
+          </Button>
+          <Button color="inherit" component={Link} to="/sheetmanagerc">
+            ເກັບໜ່ວຍກິດຄືນ
+          </Button>
         </Box>
       </Toolbar>
     </AppBar>
