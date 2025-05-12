@@ -13,8 +13,8 @@ const MyAppBar = () => {
         <Box
           sx={{
             display: "flex",
-            width: { xs: 50, md: 100 },
-            height: { xs: 50, md: 100 },
+            width: { xs: 50, md: 70 },
+            height: { xs: 50, md: 70 },
           }}
         >
           <img
@@ -27,6 +27,19 @@ const MyAppBar = () => {
             }}
           />
         </Box>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            flexGrow: 1,
+            fontFamily: "NotoSansLaoLooped, sans-serif",
+            fontSize: { xs: 20, md: 30 },
+            textAlign: "left",
+            ml: 2,
+          }}
+        >
+          SV
+        </Typography>
         <Box
           sx={{
             display: "flex",
