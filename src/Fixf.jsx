@@ -44,6 +44,18 @@ function SheetManagerC() {
     try {
       setLoading(true);
       const res = await fetch(`${apisheet}/all-sheet-data/${selectedId}`);
+      
+      if (!res.ok) {
+        if (res.status === 404) {
+          console.error("Resource not found (404). Please check the API endpoint or selectedId.");
+          alert("The requested data could not be found. Please check your selection.");
+        } else {
+          console.error(`Error: ${res.status} ${res.statusText}`);
+          alert("An error occurred while fetching data. Please try again later.");
+        }
+        return;
+      }
+
       const allData = await res.json();
       setAllSheetData(allData);
 
@@ -74,6 +86,7 @@ function SheetManagerC() {
       setStudentOptions([...students].sort());
     } catch (err) {
       console.error("Error loading spreadsheet data:", err);
+      alert("An error occurred while loading data. Please check your network connection.");
     } finally {
       setLoading(false);
     }
