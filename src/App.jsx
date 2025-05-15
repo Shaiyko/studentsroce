@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {
   Avatar,
@@ -22,7 +21,6 @@ import Footer from "./components/Footer";
 import { NAVIGATION } from "./components/Navbar";
 
 import SV from "./assets/SV.webp";
-import Cacklogin from "./components/cacklogin";
 
 import {
   Account,
@@ -35,7 +33,7 @@ import { AppProvider, DashboardLayout, PageContainer } from "@toolpad/core";
 
 // Lazy loaded pages
 const RegisterForm = React.lazy(() => import("./LoginPage/Register"));
-const LoginRegister = React.lazy(() => import("./Loginsheet"));
+const LoginRegister = React.lazy(() => import("./LoginPage/Loginsheet"));
 const SheetManagerC = React.lazy(() => import("./SheetManagerC"));
 const StudentSearchExport = React.lazy(() => import("./Showsroce"));
 
@@ -230,9 +228,7 @@ function Layout({ children }) {
     >
       <DashboardLayout
         slots={{
-          toolbarAccount: () => {
-            null;
-          },
+          
           sidebarFooter: SidebarFooterAccount,
         }}
       >

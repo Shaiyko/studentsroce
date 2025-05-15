@@ -16,12 +16,12 @@ import {
 } from "@mui/material";
 import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import KeyIcon from "@mui/icons-material/Key";
-import imasv from "./assets/SV.webp";
+import imasv from "../assets/SV.webp";
 import Swal from "sweetalert2";
-import { apisheet } from "./URL";
+import { apisheet } from "../URL";
 
 // Lazy load loading component to reduce bundle size
-const LoadingComponent = React.lazy(() => import("./Loding/loading"));
+const LoadingComponent = React.lazy(() => import("../Loding/loading"));
 
 export default function LoginRegister() {
   const [error, setError] = useState(""); // ✅ ใส่ API URL ที่ถูกต้อง
