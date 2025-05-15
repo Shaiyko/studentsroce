@@ -228,7 +228,9 @@ function Layout({ children }) {
     >
       <DashboardLayout
         slots={{
-          
+          toolbarAccount: () => {
+            null;
+          },
           sidebarFooter: SidebarFooterAccount,
         }}
       >
