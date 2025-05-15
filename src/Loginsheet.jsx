@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { AccountCircle, Visibility, VisibilityOff } from "@mui/icons-material";
 import KeyIcon from "@mui/icons-material/Key";
-import imasv from "../assets/SV.webp";
+import imasv from "./assets/SV.webp";
 import Swal from "sweetalert2";
 import { apisheet } from "./URL";
 
