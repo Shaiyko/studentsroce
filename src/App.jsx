@@ -221,7 +221,7 @@ function Layout({ children }) {
           <img src={SV} alt="SV logo" width={40} height={40} loading="lazy" />
         ),
         title: "Sengsavanh",
-        homeUrl: "/",
+        homeUrl: "/dashboard",
       }}
       authentication={authentication}
       session={session}
