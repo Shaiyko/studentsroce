@@ -55,6 +55,27 @@ export default function Dashboard() {
             ເບີ່ງຄະແນນນັກສຶກສາ
           </Typography>
         </Box>
+        <Box
+          onClick={() => navigate("/login")}
+          sx={{
+            cursor: "pointer",
+            p: 3,
+            borderRadius: 2,
+            flex: 1,
+            textAlign: "center",
+            bgcolor: "secondary.light",
+            color: "secondary.contrastText",
+            boxShadow: 3,
+            "&:hover": {
+              bgcolor: "secondary.main",
+            },
+          }}
+        >
+          <Typography variant="h6">Login</Typography>
+          <Typography variant="body2" mt={1}>
+            ເບີ່ງຄະແນນນັກສຶກສາ
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );
