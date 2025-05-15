@@ -4,7 +4,6 @@ import { Navigate } from "react-router-dom";
 export default function Cacklogin({ element, path }) {
   const loggedInUser = JSON.parse(localStorage.getItem("user")) || null;
 
-  console.log("User Info:", loggedInUser); // ✅ Debug ดูค่าที่ได้
 
 
 

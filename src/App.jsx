@@ -279,7 +279,7 @@ export default function App() {
   return (
     <Router>
       <Layout>
-        <Cacklogin />
+       
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/score" element={<StudentSearchExport />} />
