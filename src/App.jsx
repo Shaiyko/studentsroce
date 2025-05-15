@@ -202,7 +202,7 @@ function Layout({ children }) {
             },
           });
         } else {
-           window.location.href = "/login";
+          window.location.href = "/login";
         }
       },
       signOut: () => {
@@ -276,16 +276,15 @@ function SkeletonLoader({ children }) {
 export default function App() {
   return (
     <Router>
-      <Layout>
-       
-        <Routes>
+      <Routes>
+        <Layout>
           <Route path="/" element={<Dashboard />} />
           <Route path="/score" element={<StudentSearchExport />} />
           <Route path="/login" element={<LoginRegister />} />
           <Route path="/credit-recovery" element={<SheetManagerC />} />
           <Route path="/register" element={<RegisterForm />} />
-        </Routes>
-      </Layout>
+        </Layout>
+      </Routes>
     </Router>
   );
 }
