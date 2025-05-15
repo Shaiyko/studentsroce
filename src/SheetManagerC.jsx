@@ -249,16 +249,17 @@ function SheetManagerC() {
                             fontWeight: "bold",
                             textAlign: "center",
                           },
+                          
                         }}
                       >
-                        <TableCell>ລະຫັດນັກສຶກສາ</TableCell>
-                        <TableCell>ຊື່ ແລະ ນາມສະກຸນ</TableCell>
-                        <TableCell>ເບີໂທ</TableCell>
-                        <TableCell>ວິຊາ</TableCell>
-                        <TableCell>ສົກຮຽນທີ່ຈົບ</TableCell>
-                        <TableCell>ຊັ້ນປີ</TableCell>
-                        <TableCell>ສາຂາ</TableCell>
-                        <TableCell>ຄະແນນ</TableCell>
+                        <TableCell sx={{color:"black"}}>ລະຫັດນັກສຶກສາ</TableCell>
+                        <TableCell sx={{color:"black"}}>ຊື່ ແລະ ນາມສະກຸນ</TableCell>
+                        <TableCell sx={{color:"black"}}>ເບີໂທ</TableCell>
+                        <TableCell sx={{color:"black"}}>ວິຊາ</TableCell>
+                        <TableCell sx={{color:"black"}}>ສົກຮຽນທີ່ຈົບ</TableCell>
+                        <TableCell sx={{color:"black"}}>ຊັ້ນປີ</TableCell>
+                        <TableCell sx={{color:"black"}}>ສາຂາ</TableCell>
+                        <TableCell sx={{color:"black"}}>ຄະແນນ</TableCell>
                       </TableRow>
                         </TableHead>
                         <TableBody>
@@ -288,6 +289,7 @@ function SheetManagerC() {
                                       overflow: "hidden",
                                       textOverflow: "ellipsis",
                                       fontFamily: "NotoSansLaoLooped",
+                                      color: "black"
                                     }}
                                   >
                                     {cell}

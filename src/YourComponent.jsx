@@ -43,7 +43,7 @@ function YourComponent({ filters, setFilters, error, setError, classroom }) {
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Classroom"
+            label="Please select a classroom"
             fullWidth
             error={error.classrooms}
             helperText={error.classrooms ? "Please select a classroom" : ""}
@@ -92,7 +92,6 @@ function YourComponent({ filters, setFilters, error, setError, classroom }) {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              flexDirection: "column",
             }}
           >
             BBA = ບໍລິຫານທຸລະກິດ BBAC = ບໍລິຫານທຸລະກິດ ຕໍ່ເນື່ອງ BBE =

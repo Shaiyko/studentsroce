@@ -26,6 +26,7 @@ import {
 import "./Aexport.css";
 import { apisroot } from "./URL";
 import YourComponent from "./YourComponent";
+import "./Cssscore.css";
 export default function StudentSearchExport() {
   const [departments, setDepartments] = useState([]);
   const [classroom, setClassroom] = useState([]);
@@ -38,7 +39,7 @@ export default function StudentSearchExport() {
     score: "",
     classrooms: "", // ✅ แก้จาก classroms → classrooms
   });
-  
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -153,7 +154,10 @@ export default function StudentSearchExport() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, background: "#eae7e798" }}>
+    <Container
+      maxWidth="lg"
+      sx={{ mt: 4, background: "rgba(146, 142, 142, 0.1)" }}
+    >
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
         <Typography
           sx={{ fontSize: "24px", fontWeight: "bold" }}
@@ -318,27 +322,67 @@ export default function StudentSearchExport() {
           <Table fontFamily={"NotoSansLaoLooped"}>
             <TableHead>
               <TableRow>
-                <TableCell>NO.</TableCell>
-                <TableCell>Subject</TableCell>
-                <TableCell>Score</TableCell>
+                <TableCell
+                  align="center"
+                  sx={{
+                    backgroundColor: "rgba(49, 213, 254, 0.74)",
+                    color: "black",
+                  }}
+                >
+                  NO.
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{
+                    backgroundColor: "rgba(49, 213, 254, 0.74)",
+                    color: "black",
+                  }}
+                >
+                  Subject
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{
+                    backgroundColor: "rgba(49, 213, 254, 0.74)",
+                    color: "black",
+                  }}
+                >
+                  Score
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data.map((row, i) => (
                 <TableRow key={i}>
-                  <TableCell>
-                    <Typography fontFamily={"NotoSansLaoLooped"}>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      backgroundColor: "rgba(191, 194, 194, 0.56)",
+                      color: "black",
+                    }}
+                  >
+                    <Typography fontFamily="NotoSansLaoLooped">
                       {i + 1}
                     </Typography>
                   </TableCell>
-                  <TableCell>
-                    <Typography fontFamily={"NotoSansLaoLooped"}>
-                      {row.SubName}
+                  <TableCell
+                    sx={{
+                      backgroundColor: "rgba(191, 194, 194, 0.56)",
+                      color: "black",
+                    }}
+                  >
+                    <Typography fontFamily="NotoSansLaoLooped">
+                      {row?.SubName ?? "-"}
                     </Typography>
                   </TableCell>
-                  <TableCell>
-                    <Typography fontFamily={"NotoSansLaoLooped"}>
-                      {row.score}
+                  <TableCell
+                    sx={{
+                      backgroundColor: "rgba(191, 194, 194, 0.56)",
+                      color: "black",
+                    }}
+                  >
+                    <Typography fontFamily="NotoSansLaoLooped">
+                      {row?.score ?? "-"}
                     </Typography>
                   </TableCell>
                 </TableRow>
