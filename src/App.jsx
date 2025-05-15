@@ -35,7 +35,7 @@ import { AppProvider, DashboardLayout, PageContainer } from "@toolpad/core";
 
 // Lazy loaded pages
 const RegisterForm = React.lazy(() => import("./LoginPage/Register"));
-const LoginRegister = React.lazy(() => import("./LoginPage/Loginsheet"));
+const LoginRegister = React.lazy(() => import("./Loginsheet"));
 const SheetManagerC = React.lazy(() => import("./SheetManagerC"));
 const StudentSearchExport = React.lazy(() => import("./Showsroce"));
 
