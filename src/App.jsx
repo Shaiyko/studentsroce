@@ -32,8 +32,8 @@ import {
 import { AppProvider, DashboardLayout, PageContainer } from "@toolpad/core";
 
 // Lazy loaded pages
-const RegisterForm = React.lazy(() => import("./LoginPage/Register"));
-const LoginRegister = React.lazy(() => import("./LoginPage/Loginsheet"));
+const RegisterForm = React.lazy(() => import("./loginpage/Register"));
+const LoginRegister = React.lazy(() => import("./loginpage/Loginsheet"));
 const SheetManagerC = React.lazy(() => import("./SheetManagerC"));
 const StudentSearchExport = React.lazy(() => import("./Showsroce"));
 
@@ -228,9 +228,7 @@ function Layout({ children }) {
     >
       <DashboardLayout
         slots={{
-          toolbarAccount: () => {
-            null;
-          },
+          
           sidebarFooter: SidebarFooterAccount,
         }}
       >
@@ -252,7 +250,7 @@ function SkeletonLoader({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false), 300);
+    const timeout = setTimeout(() => setLoading(false));
     return () => clearTimeout(timeout);
   }, []);
 

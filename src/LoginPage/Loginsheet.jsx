@@ -19,9 +19,9 @@ import KeyIcon from "@mui/icons-material/Key";
 import imasv from "../assets/SV.webp";
 import Swal from "sweetalert2";
 import { apisheet } from "../URL";
+import LoadingComponent from "../loding/loadinglogin";
 
 // Lazy load loading component to reduce bundle size
-const LoadingComponent = React.lazy(() => import("../Loding/loading"));
 
 export default function LoginRegister() {
   const [error, setError] = useState(""); // ✅ ใส่ API URL ที่ถูกต้อง
@@ -43,70 +43,69 @@ export default function LoginRegister() {
   };
 
   const handleLoginSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  try {
-    // ✅ ตรวจสอบข้อมูลซ้ำใน Google Sheet
-    const isUnique = await checkDuplicateAccount();
-    if (!isUnique) return;
+    e.preventDefault();
+    setLoading(true);
+    try {
+      // ✅ ตรวจสอบข้อมูลซ้ำใน Google Sheet
+      const isUnique = await checkDuplicateAccount();
+      if (!isUnique) return;
 
-    // ✅ ดึงข้อมูลจากชีตที่ตรงกัน
-    const sheetRes = await fetch(`${apisheet}/all-sheet-data/${selectedId}`);
-    const allData = await sheetRes.json();
+      // ✅ ดึงข้อมูลจากชีตที่ตรงกัน
+      const sheetRes = await fetch(`${apisheet}/all-sheet-data/${selectedId}`);
+      const allData = await sheetRes.json();
 
-    let foundUser = null;
+      let foundUser = null;
 
-    for (const sheet of allData) {
-      const [header, ...rows] = sheet.data;
-      const usernameIndex = header.indexOf("username");
-      const passwordIndex = header.indexOf("password");
+      for (const sheet of allData) {
+        const [header, ...rows] = sheet.data;
+        const usernameIndex = header.indexOf("username");
+        const passwordIndex = header.indexOf("password");
 
-      const match = rows.find(
-        (row) =>
-          row[usernameIndex]?.trim() === username &&
-          row[passwordIndex]?.trim() === password
-      );
-
-      if (match) {
-        const userSheetObj = Object.fromEntries(
-          header.map((key, i) => [key, match[i]])
+        const match = rows.find(
+          (row) =>
+            row[usernameIndex]?.trim() === username &&
+            row[passwordIndex]?.trim() === password
         );
-        localStorage.setItem("user_sheet", JSON.stringify(userSheetObj));
-        foundUser = userSheetObj;
-        break;
-      }
-    }
 
-    if (foundUser) {
-      Swal.fire({
-        icon: "success",
-        title: "ເຂົ້າສູ່ລະບົບສຳເລັດ!",
-        text: `ຍີນດີຕ້ອນຮິບ ${foundUser.name || ""}`,
-        timer: 2000,
-        showConfirmButton: false,
-      });
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 2000);
-    } else {
+        if (match) {
+          const userSheetObj = Object.fromEntries(
+            header.map((key, i) => [key, match[i]])
+          );
+          localStorage.setItem("user_sheet", JSON.stringify(userSheetObj));
+          foundUser = userSheetObj;
+          break;
+        }
+      }
+
+      if (foundUser) {
+        Swal.fire({
+          icon: "success",
+          title: "ເຂົ້າສູ່ລະບົບສຳເລັດ!",
+          text: `ຍີນດີຕ້ອນຮິບ ${foundUser.name || ""}`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 2000);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "ບໍ່ມີຂໍ້ມຼນ",
+          text: "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ",
+        });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       Swal.fire({
         icon: "error",
-        title: "ບໍ່ມີຂໍ້ມຼນ",
-        text: "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ",
+        title: "ເກີດຂໍ້ຜິດພາດ",
+        text: "ບໍ່ສາມາດເຂົ້າສູ່ລະບົບໄດ້",
       });
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Login error:", error);
-    Swal.fire({
-      icon: "error",
-      title: "ເກີດຂໍ້ຜິດພາດ",
-      text: "ບໍ່ສາມາດເຂົ້າສູ່ລະບົບໄດ້",
-    });
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   const checkDuplicateAccount = async () => {
     try {
@@ -173,11 +172,10 @@ export default function LoginRegister() {
           borderRadius: 3,
         }}
       >
-        <Suspense fallback={<div />}>
+         <Suspense fallback={<div />}>
           <LoadingComponent loading={loading} />
         </Suspense>
-
-        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
           <CardMedia
             component="img"
             src={imasv}

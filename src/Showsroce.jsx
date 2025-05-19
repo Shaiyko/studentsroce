@@ -319,72 +319,20 @@ export default function StudentSearchExport() {
         </Box>
       ) : (
         <TableContainer component={Paper} sx={{ mt: 4, mb: 4 }}>
-          <Table fontFamily={"NotoSansLaoLooped"}>
+          <Table>
             <TableHead>
               <TableRow>
-                <TableCell
-                  align="center"
-                  sx={{
-                    backgroundColor: "rgba(49, 213, 254, 0.74)",
-                    color: "black",
-                  }}
-                >
-                  NO.
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    backgroundColor: "rgba(49, 213, 254, 0.74)",
-                    color: "black",
-                  }}
-                >
-                  Subject
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    backgroundColor: "rgba(49, 213, 254, 0.74)",
-                    color: "black",
-                  }}
-                >
-                  Score
-                </TableCell>
+                <TableCell align="center">NO.</TableCell>
+                <TableCell align="center">Subject</TableCell>
+                <TableCell align="center">Score</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data.map((row, i) => (
                 <TableRow key={i}>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      backgroundColor: "rgba(191, 194, 194, 0.56)",
-                      color: "black",
-                    }}
-                  >
-                    <Typography fontFamily="NotoSansLaoLooped">
-                      {i + 1}
-                    </Typography>
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      backgroundColor: "rgba(191, 194, 194, 0.56)",
-                      color: "black",
-                    }}
-                  >
-                    <Typography fontFamily="NotoSansLaoLooped">
-                      {row?.SubName ?? "-"}
-                    </Typography>
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      backgroundColor: "rgba(191, 194, 194, 0.56)",
-                      color: "black",
-                    }}
-                  >
-                    <Typography fontFamily="NotoSansLaoLooped">
-                      {row?.score ?? "-"}
-                    </Typography>
-                  </TableCell>
+                  <TableCell align="center">{i + 1}</TableCell>
+                  <TableCell>{row?.SubName ?? "-"}</TableCell>
+                  <TableCell>{row?.score ?? "-"}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

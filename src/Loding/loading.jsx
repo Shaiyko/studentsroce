@@ -1,30 +1,25 @@
 import React from 'react';
-import CircularProgress from '@mui/material/CircularProgress';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import { Backdrop } from '@mui/material';
+import { Skeleton, Box, Typography } from '@mui/material';
 
-const LoadingComponent = ({ loading }) => {
+const SkeletonLoaderComponent = ({ loading }) => {
+  if (!loading) return null;
+
   return (
-    <Backdrop
-      sx={{
-        color: '#fff',
-        zIndex: (theme) => theme.zIndex.drawer + 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)', // เพิ่มความโปร่งแสง
-        flexDirection: 'column',
-      }}
-      open={loading}
-    >
-      <CircularProgress
-        size={80}
-        thickness={5}
-        sx={{ mb: 2 }}
-      />
-      <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-        กำลังโหลดข้อมูล...
-      </Typography>
-    </Backdrop>
+    <Box sx={{ p: 2 }}>
+
+      {/* Skeleton สำหรับหัวเรื่อง */}
+      <Skeleton variant="text" width={200} height={40} />
+
+      {/* Skeleton สำหรับกล่องเนื้อหา */}
+      <Skeleton variant="rectangular" width="100%" height={100} sx={{ my: 2 }} />
+      <Skeleton variant="rectangular" width="100%" height={100} sx={{ mb: 2 }} />
+
+      {/* Skeleton สำหรับรายการย่อย */}
+      <Skeleton variant="text" width="60%" />
+      <Skeleton variant="text" width="80%" />
+      <Skeleton variant="text" width="40%" />
+    </Box>
   );
 };
 
-export default LoadingComponent;
+export default SkeletonLoaderComponent;

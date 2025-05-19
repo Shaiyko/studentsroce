@@ -39,7 +39,7 @@ function YourComponent({ filters, setFilters, error, setError, classroom }) {
           });
           setError({ ...error, classrooms: false });
         }}
-        sx={{ width: "300px" }}
+        sx={{ width: "300px" }} 
         renderInput={(params) => (
           <TextField
             {...params}

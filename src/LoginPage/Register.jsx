@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import {
   Box,
   Grid,
@@ -23,6 +23,7 @@ import axios from "axios"; // To call your backend/Apps Script Web App
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { apiemail, apisheet } from "../URL";
+import LoadingComponent from "../loding/loadinglogin";
 
 // Constants
 const genders = ["M", "F"];
@@ -393,7 +394,7 @@ export default function RegisterForm() {
             setNewPassword("");
             setVerificationCode("");
             setFormData(initialFormData);
-            navigate("/");
+            navigate("/login");
           } catch (error) {
             console.error("❌ API error:", error);
             Swal.fire({
@@ -468,9 +469,9 @@ export default function RegisterForm() {
           </Typography>
         )}
         {loading && (
-          <Typography align="center" sx={{ mb: 2 }}>
-            Loading...
-          </Typography>
+           <Suspense fallback={<div />}>
+          <LoadingComponent loading={loading} />
+        </Suspense>
         )}
         <Stepper activeStep={activeStep} sx={{ mb: 3 }}>
           {steps.map((label) => (
