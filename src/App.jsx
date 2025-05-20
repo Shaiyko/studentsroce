@@ -30,6 +30,9 @@ import {
 } from "@toolpad/core/Account";
 
 import { AppProvider, DashboardLayout, PageContainer } from "@toolpad/core";
+import StudentSearchExporttest from "./Showsrocetest";
+import StudentProfile from "./loginpage/profire";
+import Cacklogin from "./components/cacklogin";
 
 // Lazy loaded pages
 const RegisterForm = React.lazy(() => import("./loginpage/Register"));
@@ -172,6 +175,7 @@ function Layout({ children }) {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user_sheet");
+    console.log(storedUser);
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
@@ -191,6 +195,7 @@ function Layout({ children }) {
   const authentication = useMemo(() => {
     return {
       signIn: () => {
+        localStorage.removeItem("user_sheet"); // ล้างก่อน login ใหม่
         const storedUser = localStorage.getItem("user_sheet");
         if (storedUser) {
           const user = JSON.parse(storedUser);
@@ -202,12 +207,13 @@ function Layout({ children }) {
             },
           });
         } else {
-           window.location.href = "/login";
+          window.location.href = "/login";
         }
       },
       signOut: () => {
         localStorage.removeItem("user_sheet");
         setSession(null);
+        window.location.href = "/";
       },
     };
   }, []);
@@ -228,7 +234,6 @@ function Layout({ children }) {
     >
       <DashboardLayout
         slots={{
-          
           sidebarFooter: SidebarFooterAccount,
         }}
       >
@@ -275,13 +280,18 @@ export default function App() {
   return (
     <Router>
       <Layout>
-       
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/score" element={<StudentSearchExport />} />
+          <Route path="/scores" element={<StudentSearchExporttest />} />
           <Route path="/login" element={<LoginRegister />} />
           <Route path="/credit-recovery" element={<SheetManagerC />} />
           <Route path="/register" element={<RegisterForm />} />
+
+          <Route
+            path="/profire"
+            element={<Cacklogin element={<StudentProfile />} path="/profire" />}
+          />
         </Routes>
       </Layout>
     </Router>

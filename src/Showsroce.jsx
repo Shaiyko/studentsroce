@@ -42,9 +42,9 @@ export default function StudentSearchExport() {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState({});
   const [inputValue, setInputValue] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState([]);
-  const [error, setError] = useState({});
   //****************************** */
   useEffect(() => {
     setLoading(true);

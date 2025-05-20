@@ -26,12 +26,8 @@ import { apiemail, apisheet } from "../URL";
 import LoadingComponent from "../loding/loadinglogin";
 
 // Constants
-const genders = [
-  { value: "M", label: "ຊາຍ" },
-  { value: "F", label: "ຍິງ" },
-];
-
-const statuses = ["ກຳລັງຮຽນ", "ຈົບການສຶກສາແລ້ວ", "ອອກແລ້ວ", "ພັກການຮຽນ"];
+const genders = ["M", "F"];
+const statuses = ["ກຳລັງຮຽນ", "ຈົບການສຶກສາແລ້ວ", "ອອກແລ້ວ"];
 const gmailtext = "Please enter your valid email address for verification.";
 const steps = ["Account Setup", "Email Verification", "Student Details"];
 const dep = [
@@ -127,7 +123,6 @@ export default function RegisterForm() {
     village: "",
     district: "",
     province: "",
-    status_user: "user"
   };
   const [formData, setFormData] = useState(initialFormData);
 
@@ -301,15 +296,13 @@ export default function RegisterForm() {
         return false;
       }
 
-      /*
-      ✅ ส่งโค้ดยืนยันหากทั้ง username และ email ยังไม่ซ้ำ
+      // ✅ ส่งโค้ดยืนยันหากทั้ง username และ email ยังไม่ซ้ำ
       await axios.post(`${apiemail}/send-code`, {
         email: emailLocal,
         user_name: username,
       });
-      */
 
-      setActiveStep(activeStep + 2);
+      setActiveStep(activeStep + 1);
       return true;
     } catch (err) {
       console.error(err);
@@ -334,7 +327,7 @@ export default function RegisterForm() {
           // --- END ACTUAL BACKEND CALL ---
           await checkDuplicateAccount();
           startResendCooldown();
-
+          setActiveStep(1);
           break;
 
         case 1:
@@ -476,9 +469,9 @@ export default function RegisterForm() {
           </Typography>
         )}
         {loading && (
-          <Suspense fallback={<div />}>
-            <LoadingComponent loading={loading} />
-          </Suspense>
+           <Suspense fallback={<div />}>
+          <LoadingComponent loading={loading} />
+        </Suspense>
         )}
         <Stepper activeStep={activeStep} sx={{ mb: 3 }}>
           {steps.map((label) => (
@@ -647,8 +640,8 @@ export default function RegisterForm() {
                   sx={{ minWidth: 130 }}
                 >
                   {genders.map((g) => (
-                    <MenuItem key={g.value} value={g.value}>
-                      {g.label}
+                    <MenuItem key={g} value={g}>
+                      {g}
                     </MenuItem>
                   ))}
                 </TextField>

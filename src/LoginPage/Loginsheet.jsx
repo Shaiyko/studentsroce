@@ -51,7 +51,7 @@ export default function LoginRegister() {
       if (!isUnique) return;
 
       // ✅ ดึงข้อมูลจากชีตที่ตรงกัน
-      const sheetRes = await fetch(`${apisheet}/all-sheet-data/${selectedId}`);
+      const sheetRes = await fetch(`${apisheet}/all-sheet-datas/${selectedId}`);
       const allData = await sheetRes.json();
 
       let foundUser = null;
@@ -107,53 +107,49 @@ export default function LoginRegister() {
     }
   };
 
-  const checkDuplicateAccount = async () => {
-    try {
-      const res = await fetch(`${apisheet}/all-sheet-data/${selectedId}`);
-      if (!res.ok) throw new Error("Failed to fetch sheet data");
-      const allData = await res.json();
+ const checkDuplicateAccount = async () => {
+  try {
+    const res = await fetch(`${apisheet}/all-sheet-datas/${selectedId}`);
+    if (!res.ok) throw new Error("Failed to fetch sheet data");
+    const allData = await res.json();
 
-      const usernames = new Set();
-      const passwords = new Set();
+    let found = false;
 
-      for (const sheet of allData) {
-        const [header, ...rows] = sheet.data;
-        const usernameIndex = header.indexOf("username");
-        const passwordIndex = header.indexOf("password");
+    for (const sheet of allData) {
+      const [header, ...rows] = sheet.data;
+      const usernameIndex = header.indexOf("username");
+      const passwordIndex = header.indexOf("password");
 
-        if (usernameIndex === -1 || passwordIndex === -1) continue;
+      if (usernameIndex === -1 || passwordIndex === -1) continue;
 
-        for (const row of rows) {
-          if (row[usernameIndex]) usernames.add(row[usernameIndex].trim());
-          if (row[passwordIndex]) passwords.add(row[passwordIndex].trim());
+      for (const row of rows) {
+        const user = row[usernameIndex]?.trim();
+        const pass = row[passwordIndex]?.trim();
+        if (user === username && pass === password) {
+          found = true;
+          break;
         }
       }
+      if (found) break;
+    }
 
-      if (!usernames.has(username)) {
-        Swal.fire({
-          icon: "error",
-          title: "Username not found",
-          text: "ບໍ່ຊື່ນີ້ໃນຖານຂໍ້ມູນ",
-        });
-        return false;
-      }
-
-      if (!passwords.has(password)) {
-        Swal.fire({
-          icon: "error",
-          title: "Incorrect Password",
-          text: "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ",
-        });
-        return false;
-      }
-
-      return true;
-    } catch (err) {
-      console.error(err);
-      setError("Error checking duplicate account.");
+    if (!found) {
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດບໍ່ຖືກຕ້ອງ",
+      });
       return false;
     }
-  };
+
+    return true;
+  } catch (err) {
+    console.error(err);
+    setError("Error checking account.");
+    return false;
+  }
+};
+
 
   return (
     <Container
