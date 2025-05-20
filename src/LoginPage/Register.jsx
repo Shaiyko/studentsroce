@@ -296,13 +296,15 @@ export default function RegisterForm() {
         return false;
       }
 
-      // ✅ ส่งโค้ดยืนยันหากทั้ง username และ email ยังไม่ซ้ำ
+      /*
+      ✅ ส่งโค้ดยืนยันหากทั้ง username และ email ยังไม่ซ้ำ
       await axios.post(`${apiemail}/send-code`, {
         email: emailLocal,
         user_name: username,
       });
+      */ 
 
-      setActiveStep(activeStep + 1);
+      setActiveStep(activeStep + 2);
       return true;
     } catch (err) {
       console.error(err);
@@ -327,7 +329,7 @@ export default function RegisterForm() {
           // --- END ACTUAL BACKEND CALL ---
           await checkDuplicateAccount();
           startResendCooldown();
-          setActiveStep(1);
+          
           break;
 
         case 1:
