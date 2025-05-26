@@ -3,6 +3,8 @@ import React from "react";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
+import PersonIcon from '@mui/icons-material/Person';
 export const NAVIGATION = [
   { kind: "header", title: "Main items" },
   { segment: "profire", title: "ກ່ຽວກັບບັນຊີ", icon: <AccountCircleIcon /> },
@@ -15,4 +17,10 @@ export const NAVIGATION = [
     icon: <BarChartIcon />,
   },
   { kind: "divider" },
+  {
+    segment: 'people',
+    title: 'People',
+    icon: <PersonIcon />,
+    pattern: 'people{/:personId}*',
+  },
 ];

@@ -33,6 +33,7 @@ import { AppProvider, DashboardLayout, PageContainer } from "@toolpad/core";
 import StudentSearchExporttest from "./Showsrocetest";
 import StudentProfile from "./loginpage/profire";
 import Cacklogin from "./components/cacklogin";
+import CrudCreate from "./test/regis";
 
 // Lazy loaded pages
 const RegisterForm = React.lazy(() => import("./loginpage/Register"));
@@ -292,6 +293,7 @@ export default function App() {
             path="/profire"
             element={<Cacklogin element={<StudentProfile />} path="/profire" />}
           />
+          <Route path="/people" element={<CrudCreate />} />
         </Routes>
       </Layout>
     </Router>

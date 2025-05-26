@@ -1,3 +1,11 @@
-export const apisroot = `https://apisroce.onrender.com`;
-export const apisheet = `https://sheetapi-vw0g.onrender.com`;
-export const apiemail = `https://gmail-api-pefn.onrender.com`;
+const apiss = "https://apisroce.onrender.com";
+const apigo = "https://apisroceshv.onrender.com";
+const apisl = "http://localhost:4005";
+
+const apisheets = "https://sheetapi-vw0g.onrender.com";
+const apisheetgo = "https://sheetapigo.onrender.com";
+const apisheetlocal = "http://localhost:4002";
+
+export const apisroot = apigo;
+export const apisheet = apisheetgo;
+export const apiemail = "https://gmail-api-pefn.onrender.com";

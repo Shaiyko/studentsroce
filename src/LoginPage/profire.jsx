@@ -22,7 +22,7 @@ const statuses = ["ກຳລັງຮຽນ", "ຈົບການສຶກສາ
 const dep = [
   {
     id: 1,
-    name: "ສາຂາການບໍລິຫານສາຂາວິຊາ ບໍລິຫານ ທຸລະກິດຕໍ່ເນື່ອງ",
+    name: "ສາຂາວິຊາ ບໍລິຫານ ທຸລະກິດຕໍ່ເນື່ອງ",
   },
   {
     id: 2,
@@ -102,13 +102,12 @@ export default function StudentProfile() {
         icon: "success",
         title: "ແກ້ໄຂສຳເລັດ!",
         text: `ຍີນດີຕ້ອນຮິບ `,
-        timer: 2000,
+        timer: 3000,
       });
       setEditing(false);
-
     } catch (err) {
       alert("Failed to update profile: " + err.message);
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -120,7 +119,14 @@ export default function StudentProfile() {
   return (
     <Box
       component="form"
-      sx={{ maxWidth: 800, mx: "auto", p: 2 }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 2, // ระยะห่างระหว่าง TextField
+        maxWidth: 600, // กำหนดความกว้างสูงสุดบน desktop
+        mx: "auto", // จัดให้อยู่กึ่งกลางแนวนอน
+        px: 2, // padding ซ้ายขวา เพื่อไม่ชิดขอบจอบนมือถือ
+      }}
       onSubmit={(e) => {
         e.preventDefault();
         handleSave();
@@ -131,224 +137,212 @@ export default function StudentProfile() {
         ຂໍ້ມູນສ່ວນຕົວ (Personal Info)
       </Typography>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="ຊື່ ແລະ ນາມສະກຸນ (Lao Name)"
-            name="name"
-            value={profile.name || ""}
-            onChange={handleChange}
-            fullWidth
-            required
-            disabled={!editing}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="Name and Surname (English)"
-            name="name_e"
-            value={profile.name_e || ""}
-            onChange={handleChange}
-            fullWidth
-            required
-            disabled={!editing}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="ວັນເດືອນປີເກິດ"
-            name="dob"
-            type="date"
-            value={profile.dob || ""}
-            onChange={handleChange}
-            fullWidth
-            InputLabelProps={{ shrink: true }}
-            required
-            disabled={!editing}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            select
-            label="ເພດ"
-            name="gender"
-            value={profile.gender || ""}
-            onChange={handleChange}
-            fullWidth
-            required
-            disabled={!editing}
-            sx={{ minWidth: 100 }}
-          >
-            {genders.map((g) => (
-              <MenuItem key={g.value} value={g.value}>
-                {g.label}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="ເບີໂທ"
-            name="phone"
-            type="tel"
-            value={profile.phone || ""}
-            onChange={handleChange}
-            fullWidth
-            required
-            disabled={!editing}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="ອີເມວຕິດຕໍ່"
-            name="email"
-            value={profile.email || ""}
-            fullWidth
-            disabled
-          />
-        </Grid>
-      </Grid>
+      {/* Personal Info */}
 
+      <TextField
+        label="ຊື່ ແລະ ນາມສະກຸນ (Lao Name)"
+        name="name"
+        value={profile.name || ""}
+        onChange={handleChange}
+        fullWidth
+        required
+        disabled={!editing}
+        multiline
+        minRows={2}
+      />
+
+      <TextField
+        label="Name and Surname (English)"
+        name="name_e"
+        value={profile.name_e || ""}
+        onChange={handleChange}
+        fullWidth
+        required
+        disabled={!editing}
+        multiline
+        minRows={2}
+      />
+
+      <TextField
+        label="ວັນເດືອນປີເກິດ"
+        name="dob"
+        type="date"
+        value={profile.dob || ""}
+        onChange={handleChange}
+        fullWidth
+        InputLabelProps={{ shrink: true }}
+        required
+        disabled={!editing}
+      />
+
+      <TextField
+        select
+        label="ເພດ"
+        name="gender"
+        value={profile.gender || ""}
+        onChange={handleChange}
+        fullWidth
+        required
+        disabled={!editing}
+      >
+        {genders.map((g) => (
+          <MenuItem key={g.value} value={g.value}>
+            {g.label}
+          </MenuItem>
+        ))}
+      </TextField>
+
+      <TextField
+        label="ເບີໂທ"
+        name="phone"
+        type="tel"
+        value={profile.phone || ""}
+        onChange={handleChange}
+        fullWidth
+        required
+        disabled={!editing}
+      />
+
+      <TextField
+        label="ອີເມວຕິດຕໍ່"
+        name="email"
+        value={profile.email || ""}
+        fullWidth
+        disabled
+        multiline
+        minRows={2}
+      />
+
+      {/* Education Info */}
       <Typography variant="h6" sx={{ mt: 4 }}>
         ຂໍ້ມູນການສຶກສາ (Educational Info)
       </Typography>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            select
-            label="ລຸ້ນທີ"
-            name="generation_id"
-            value={profile.generation_id || ""}
-            onChange={handleChange}
-            fullWidth
-            required
-            disabled={!editing}
-          >
-            {Array.from({ length: 10 }, (_, i) => (
-              <MenuItem key={i} value={i + 1}>
-                ລຸ້ນທີ {i + 1}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            select
-            label="ສາຂາ"
-            name="department_id"
-            value={profile.department_id || ""}
-            onChange={handleChange}
-            fullWidth
-            required
-            disabled={!editing}
-          >
-            {dep.map((d) => (
-              <MenuItem key={d.id} value={d.id}>
-                {d.name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            select
-            label="ສົກຮຽນ"
-            name="school_year"
-            value={profile.school_year || ""}
-            onChange={handleChange}
-            fullWidth
-            required
-            disabled={!editing}
-          >
-            {schoolYearOptions.map((sy) => (
-              <MenuItem key={sy} value={sy}>
-                {sy}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            select
-            label="ສະຖານະການສຶກສາ"
-            name="status"
-            value={profile.status || ""}
-            onChange={handleChange}
-            fullWidth
-            required
-            disabled={!editing}
-            sx={{ minWidth: 150 }}
-          >
-            {statuses.map((s) => (
-              <MenuItem key={s} value={s}>
-                {s}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-        {profile.status === "ກຳລັງຮຽນ" && (
-          <Grid item xs={12} sm={6}>
-            <TextField
-              select
-              label="ປີປັດຈຸບັນ"
-              name="year"
-              value={profile.year || ""}
-              onChange={handleChange}
-              fullWidth
-              required
-              disabled={!editing}
-            >
-              {Array.from({ length: 4 }, (_, i) => (
-                <MenuItem key={i} value={i + 1}>
-                  ປີ {i + 1}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-        )}
-      </Grid>
+      <TextField
+        select
+        label="ລຸ້ນທີ"
+        name="generation_id"
+        value={profile.generation_id || ""}
+        onChange={handleChange}
+        fullWidth
+        required
+        disabled={!editing}
+      >
+        {Array.from({ length: 10 }, (_, i) => (
+          <MenuItem key={i} value={i + 1}>
+            ລຸ້ນທີ {i + 1}
+          </MenuItem>
+        ))}
+      </TextField>
 
+      <TextField
+        select
+        label="ສາຂາ"
+        name="department_id"
+        value={profile.department_id || ""}
+        onChange={handleChange}
+        fullWidth
+        required
+        disabled={!editing}
+        multiline
+        minRows={2}
+      >
+        {dep.map((d) => (
+          <MenuItem key={d.id} value={d.id}>
+            {d.name}
+          </MenuItem>
+        ))}
+      </TextField>
+
+      <TextField
+        select
+        label="ສົກຮຽນ"
+        name="school_year"
+        value={profile.school_year || ""}
+        onChange={handleChange}
+        fullWidth
+        required
+        disabled={!editing}
+      >
+        {schoolYearOptions.map((sy) => (
+          <MenuItem key={sy} value={sy}>
+            {sy}
+          </MenuItem>
+        ))}
+      </TextField>
+
+      <TextField
+        select
+        label="ສະຖານະການສຶກສາ"
+        name="status"
+        value={profile.status || ""}
+        onChange={handleChange}
+        fullWidth
+        required
+        disabled={!editing}
+      >
+        {statuses.map((s) => (
+          <MenuItem key={s} value={s}>
+            {s}
+          </MenuItem>
+        ))}
+      </TextField>
+
+      {profile.status === "ກຳລັງຮຽນ" && (
+        <TextField
+          select
+          label="ປີປັດຈຸບັນ"
+          name="year"
+          value={profile.year || ""}
+          onChange={handleChange}
+          fullWidth
+          required
+          disabled={!editing}
+        >
+          {Array.from({ length: 4 }, (_, i) => (
+            <MenuItem key={i} value={i + 1}>
+              ປີ {i + 1}
+            </MenuItem>
+          ))}
+        </TextField>
+      )}
+
+      {/* Address Info */}
       <Typography variant="h6" sx={{ mt: 4 }}>
-        ຂໍ້ມູນທີ່ຢູ່ (Address Info)
+        ຂໍ້ມູນທີ່ຢູ່ເກີດ (Birth Address Info)
       </Typography>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="ບ້ານ"
-            name="village"
-            value={profile.village || ""}
-            onChange={handleChange}
-            fullWidth
-            required
-            disabled={!editing}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="ເມືອງ"
-            name="district"
-            value={profile.district || ""}
-            onChange={handleChange}
-            fullWidth
-            required
-            disabled={!editing}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="ແຂວງ"
-            name="province"
-            value={profile.province || ""}
-            onChange={handleChange}
-            fullWidth
-            required
-            disabled={!editing}
-          />
-        </Grid>
-      </Grid>
+      <TextField
+        label="ບ້ານ"
+        name="village"
+        value={profile.village || ""}
+        onChange={handleChange}
+        fullWidth
+        required
+        disabled={!editing}
+      />
 
+      <TextField
+        label="ເມືອງ"
+        name="district"
+        value={profile.district || ""}
+        onChange={handleChange}
+        fullWidth
+        required
+        disabled={!editing}
+      />
+
+      <TextField
+        label="ແຂວງ"
+        name="province"
+        value={profile.province || ""}
+        onChange={handleChange}
+        fullWidth
+        required
+        disabled={!editing}
+      />
+
+      {/* Buttons */}
       <Box sx={{ mt: 4, textAlign: "center" }}>
         <Button variant="outlined" onClick={() => setEditing(!editing)}>
           {editing ? "Cancel" : "Edit"}

@@ -33,11 +33,11 @@ const genders = [
 
 const statuses = ["ກຳລັງຮຽນ", "ຈົບການສຶກສາແລ້ວ", "ອອກແລ້ວ", "ພັກການຮຽນ"];
 const gmailtext = "Please enter your valid email address for verification.";
-const steps = ["Account Setup", "Email Verification", "Student Details"];
+const steps = ["Account Setup", "", "Student Details (Personal Info)"];
 const dep = [
   {
     id: 1,
-    name: "ສາຂາການບໍລິຫານສາຂາວິຊາ ບໍລິຫານ ທຸລະກິດຕໍ່ເນື່ອງ",
+    name: "ສາຂາວິຊາ ບໍລິຫານ ທຸລະກິດຕໍ່ເນື່ອງ",
   },
   {
     id: 2,
@@ -127,7 +127,7 @@ export default function RegisterForm() {
     village: "",
     district: "",
     province: "",
-    status_user: "user"
+    status_user: "user",
   };
   const [formData, setFormData] = useState(initialFormData);
 
@@ -452,7 +452,6 @@ export default function RegisterForm() {
   return (
     <Box
       sx={{
-        maxWidth: 960,
         mx: "auto",
         p: { xs: 2, sm: 4 },
         display: "flex",
@@ -547,7 +546,7 @@ export default function RegisterForm() {
               fullWidth
               disabled={loading || !username || !emailLocal || !newPassword}
             >
-              Next (Verify Email)
+              Next (Personal Info)
             </Button>
           </>
         )}
@@ -600,215 +599,205 @@ export default function RegisterForm() {
 
         {/* Step 2: Student Details */}
         {activeStep === 2 && (
-          <Box component="form" onSubmit={handleSubmitForm}>
+          <Box
+            component="form"
+            onSubmit={handleSubmitForm}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2, // ระยะห่างระหว่าง TextField
+              maxWidth: 600, // กำหนดความกว้างสูงสุดบน desktop
+              mx: "auto", // จัดให้อยู่กึ่งกลางแนวนอน
+              px: 2, // padding ซ้ายขวา เพื่อไม่ชิดขอบจอบนมือถือ
+            }}
+          >
             <SectionTitle title="ຂໍ້ມູນສ່ວນຕົວ (Personal Info)" />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="ຊື່ ແລະ ນາມສະກຸນ (Lao Name)"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Name and Surname (English)"
-                  name="name_e"
-                  value={formData.name_e}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="ວັນເດືອນປີເກິດ (Date of Birth)"
-                  name="dob"
-                  type="date"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  select
-                  label="ເພດ (Gender)"
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                  sx={{ minWidth: 130 }}
-                >
-                  {genders.map((g) => (
-                    <MenuItem key={g.value} value={g.value}>
-                      {g.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="ເບີໂທ (Phone Number)"
-                  name="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="ອີເມວຕິດຕໍ່ (Contact Email)"
-                  name="email"
-                  type="email"
-                  value={emailLocal}
-                  fullWidth
-                  required
-                  disabled
-                />
-              </Grid>
-            </Grid>
+
+            <TextField
+              label="ຊື່ ແລະ ນາມສະກຸນ (Lao Name)"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+
+            <TextField
+              label="Name and Surname (English)"
+              name="name_e"
+              value={formData.name_e}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+
+            <TextField
+              label="ວັນເດືອນປີເກິດ (Date of Birth)"
+              name="dob"
+              type="date"
+              value={formData.dob}
+              onChange={handleChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              required
+              sx={{ minWidth: 130 }}
+            />
+
+            <TextField
+              select
+              label="ເພດ (Gender)"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              fullWidth
+              required
+              sx={{ minWidth: 130 }}
+            >
+              {genders.map((g) => (
+                <MenuItem key={g.value} value={g.value}>
+                  {g.label}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              label="ເບີໂທ (Phone Number)"
+              name="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+
+            <TextField
+              label="ອີເມວຕິດຕໍ່ (Contact Email)"
+              name="email"
+              type="email"
+              value={emailLocal}
+              fullWidth
+              required
+              disabled
+              multiline
+              minRows={2}
+            />
 
             <SectionTitle title="ຂໍ້ມູນການສຶກສາ (Educational Info)" />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="ລຸ້ນທີ (Generation ID)"
-                  name="generation_id"
-                  value={formData.generation_id}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                  select
-                  sx={{ minWidth: 170 }}
-                >
-                  {Array.from({ length: 4 }, (_, i) => i).map((s) => (
-                    <MenuItem key={s} value={s + 1}>
-                      ລຸ້ນທີ {s + 1}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="ສາຂາ (Department ID)"
-                  name="department_id"
-                  value={formData.department_id}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                  select
-                  sx={{ minWidth: 170 }}
-                >
-                  {dep.map((d) => (
-                    <MenuItem key={d.id} value={d.id}>
-                      {d.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  select
-                  label="ສົກຮຽນ (School Year)"
-                  name="school_year"
-                  value={formData.school_year}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                >
-                  {schoolYearOptions.map((sy) => (
-                    <MenuItem key={sy} value={sy}>
-                      {sy}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  select
-                  label="ສະຖານະການສຶກສາ (Educational Status)"
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                  sx={{ minWidth: 150 }}
-                >
-                  {statuses.map((s) => (
-                    <MenuItem key={s} value={s}>
-                      {s}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
 
-              {formData.status === "ກຳລັງຮຽນ" && (
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    select
-                    label="ຊັ້ນປີປັດຈຸບັນ (Current Year Level)"
-                    name="year"
-                    value={formData.year}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                    sx={{ minWidth: 150 }}
-                  >
-                    {Array.from({ length: 4 }, (_, i) => i).map((s) => (
-                      <MenuItem key={s} value={s + 1}>
-                        ປີ {s + 1}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-              )}
-            </Grid>
+            <TextField
+              label="ລຸ້ນທີ (Generation ID)"
+              name="generation_id"
+              value={formData.generation_id}
+              onChange={handleChange}
+              fullWidth
+              required
+              select
+              sx={{ minWidth: 170 }}
+            >
+              {Array.from({ length: 10 }, (_, i) => i).map((s) => (
+                <MenuItem key={s} value={s + 1}>
+                  ລຸ້ນທີ {s + 1}
+                </MenuItem>
+              ))}
+            </TextField>
 
-            <SectionTitle title="ຂໍ້ມູນທີ່ຢູ່ (Address Info)" />
+            <TextField
+              label="ສາຂາ (Department ID)"
+              name="department_id"
+              value={formData.department_id}
+              onChange={handleChange}
+              fullWidth
+              required
+              select
+              sx={{ minWidth: 170 }}
+            >
+              {dep.map((d) => (
+                <MenuItem key={d.id} value={d.id}>
+                  {d.name}
+                </MenuItem>
+              ))}
+            </TextField>
 
-            <>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
-                  <TextField
-                    label="ບ້ານ (Village)"
-                    name="village"
-                    value={formData.village}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <TextField
-                    label="ເມືອງ (District)"
-                    name="district"
-                    value={formData.district}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <TextField
-                    label="ແຂວງ (Province)"
-                    name="province"
-                    value={formData.province}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                </Grid>
-              </Grid>
-            </>
+            <TextField
+              select
+              label="ສົກຮຽນ (School Year)"
+              name="school_year"
+              value={formData.school_year}
+              onChange={handleChange}
+              fullWidth
+              required
+            >
+              {schoolYearOptions.map((sy) => (
+                <MenuItem key={sy} value={sy}>
+                  {sy}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              select
+              label="ສະຖານະການສຶກສາ (Educational Status)"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              fullWidth
+              required
+              sx={{ minWidth: 150 }}
+            >
+              {statuses.map((s) => (
+                <MenuItem key={s} value={s}>
+                  {s}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            {formData.status === "ກຳລັງຮຽນ" && (
+              <TextField
+                select
+                label="ຊັ້ນປີປັດຈຸບັນ (Current Year Level)"
+                name="year"
+                value={formData.year}
+                onChange={handleChange}
+                fullWidth
+                required
+                sx={{ minWidth: 150 }}
+              >
+                {Array.from({ length: 4 }, (_, i) => i).map((s) => (
+                  <MenuItem key={s} value={s + 1}>
+                    ປີ {s + 1}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+
+            <SectionTitle title="ຂໍ້ມູນທີ່ຢູ່ເກີດ (Birth Address Info)" />
+
+            <TextField
+              label="ບ້ານ (Village)"
+              name="village"
+              value={formData.village}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+
+            <TextField
+              label="ເມືອງ (District)"
+              name="district"
+              value={formData.district}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+
+            <TextField
+              label="ແຂວງ (Province)"
+              name="province"
+              value={formData.province}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
 
             <Box mt={4} textAlign="center">
               <Button
@@ -821,12 +810,12 @@ export default function RegisterForm() {
                 {loading ? "ກຳລັງລົງທະບຽນ..." : "ລົງທະບຽນ (Register)"}
               </Button>
               <Button
-                onClick={() => setActiveStep(1)}
+                onClick={() => setActiveStep(0)}
                 variant="outlined"
                 sx={{ ml: 2, mt: { xs: 1, sm: 0 } }}
                 disabled={loading}
               >
-                Back to Email Verification
+                Back to Account Setup
               </Button>
             </Box>
           </Box>
