@@ -34,6 +34,7 @@ import StudentSearchExporttest from "./Showsrocetest";
 import StudentProfile from "./loginpage/profire";
 import Cacklogin from "./components/cacklogin";
 import CrudCreate from "./test/regis";
+import NotFoundPage from "./components/Notfoundpage";
 
 // Lazy loaded pages
 const RegisterForm = React.lazy(() => import("./loginpage/Register"));
@@ -293,7 +294,25 @@ export default function App() {
             path="/profire"
             element={<Cacklogin element={<StudentProfile />} path="/profire" />}
           />
-          <Route path="/people" element={<CrudCreate />} />
+         
+            <Route
+        path="/admin/*"
+        element={
+          <Cacklogin
+            path="/admin"
+            element={
+              <Routes>
+                <Route path="people" element={<CrudCreate />} />
+                <Route path="cc" element={<div>CC Page</div>} />
+                <Route
+                  path="*"
+                  element={<NotFoundPage message="404: admin sub-page not found" />}
+                />
+              </Routes>
+            }
+          />
+        }
+      />
         </Routes>
       </Layout>
     </Router>

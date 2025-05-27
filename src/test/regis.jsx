@@ -35,7 +35,7 @@ export const peopleDataSource = {
     {
       field: 'deta',
       headerName: 'Age',
-      type: 'date',
+      type: 'email',
     },
   ],
   createOne: async (data) => {
