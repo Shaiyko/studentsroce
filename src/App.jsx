@@ -31,10 +31,10 @@ import {
 
 import { AppProvider, DashboardLayout, PageContainer } from "@toolpad/core";
 import StudentSearchExporttest from "./Showsrocetest";
-import StudentProfile from "./loginpage/profire";
 import Cacklogin from "./components/cacklogin";
 import CrudCreate from "./test/regis";
 import NotFoundPage from "./components/Notfoundpage";
+import StudentProfile from "./loginpage/profire";
 
 // Lazy loaded pages
 const RegisterForm = React.lazy(() => import("./loginpage/Register"));
