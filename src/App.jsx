@@ -294,26 +294,17 @@ export default function App() {
             path="/profire"
             element={<Cacklogin element={<StudentProfile />} path="/profire" />}
           />
-         
+
+          <Route path="/admin/*" element={<Cacklogin path="/admin" />}>
+            <Route path="people" element={<CrudCreate />} />
+            <Route path="cc" element={<div>CC Page</div>} />
             <Route
-        path="/admin/*"
-        element={
-          <Cacklogin
-            path="/admin"
-            element={
-              <Routes>
-                <Route path="people" element={<CrudCreate />} />
-                <Route path="cc" element={<div>CC Page</div>} />
-                <Route
-                  path="*"
-                  element={<NotFoundPage message="404: admin sub-page not found" />}
-                />
-              </Routes>
-            }
-          />
-        }
-      />
-        {/* ✅ จับทุก route ที่ไม่มี match ด้านบน */}
+              path="*"
+              element={<NotFoundPage message="404: admin sub-page not found" />}
+            />
+          </Route>
+
+          {/* ✅ จับทุก route ที่ไม่มี match ด้านบน */}
           <Route
             path="*"
             element={<NotFoundPage message="404: page not found" />}
