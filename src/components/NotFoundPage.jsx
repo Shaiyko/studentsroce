@@ -9,7 +9,6 @@ export default function NotFoundPage({ message = "Content not found", showLogin 
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        bgcolor: "#f8f8f8",
         padding: 2,
       }}
     >
@@ -24,11 +23,11 @@ export default function NotFoundPage({ message = "Content not found", showLogin 
           width: "100%",
         }}
       >
-        <ErrorOutlineIcon sx={{ fontSize: 60, color: "error.main", mb: 1 }} />
-        <Typography variant="h3" sx={{ fontWeight: "bold" }}>
+        <ErrorOutlineIcon sx={{ fontSize: 60, color: "error.main", }} />
+        <Typography variant="h3" sx={{ fontWeight: "bold",color:"black" }}>
           404
         </Typography>
-        <Typography variant="h6" sx={{ mb: 2, color: "text.secondary" }}>
+        <Typography variant="h6" sx={{ mb: 2, color: "grey" }}>
           {message}
         </Typography>
 

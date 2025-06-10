@@ -3,7 +3,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonIcon from "@mui/icons-material/Person";
-
+import HomeIcon from '@mui/icons-material/Home';
 let extraNav = [];
 
 const storedUser = localStorage.getItem("user_sheet");
@@ -37,7 +37,7 @@ export const NAVIGATION = [
   { kind: "header", title: "Main items" },
   { segment: "profire", title: "ກ່ຽວກັບບັນຊີ", icon: <AccountCircleIcon /> },
   { kind: "divider" },
-  { segment: " ", title: "ໜ້າຫຼັກ", icon: <DashboardIcon /> },
+  { segment: " ", title: "ໜ້າຫຼັກ", icon: <HomeIcon /> },
   { segment: "score", title: "ເບີ່ງຄະແນນ", icon: <DashboardIcon /> },
   {
     segment: "credit-recovery",

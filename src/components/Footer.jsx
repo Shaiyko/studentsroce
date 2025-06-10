@@ -1,48 +1,75 @@
 import React from "react";
-import { Box, Typography, Divider, Container } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import {
+  Box,
+  Typography,
+  Divider,
+  Container,
+  Grid,
+  useTheme,
+} from "@mui/material";
 
 const Footer = () => {
+  const theme = useTheme();
+
   return (
     <Box
       component="footer"
       sx={{
-        bgcolor: "rgba(22, 193, 245, 0.64)",
+        bgcolor: theme.palette.background.paper,
+        color: theme.palette.text.primary,
         pt: 5,
         pb: 3,
         mt: "auto",
-       
+        borderTop: `1px solid ${theme.palette.divider}`,
       }}
-      
     >
       <Container maxWidth="lg">
-        <Grid
-          sx={{ display: "flex", justifyContent: "center" }}
-          container
-          spacing={4}
-        >
+        <Grid container spacing={4} justifyContent="center">
           <Grid item xs={12} sm={6} md={3}>
-            <Typography fontFamily={"NotoSansLaoLooped"} variant="h6" color="inherit" gutterBottom>
-              ຕິກຕໍ່ເຮົາ
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{
+                fontFamily: "NotoSansLaoLooped",
+                fontWeight: "bold",
+                color: theme.palette.text.primary,
+              }}
+            >
+              ຕິດຕໍ່ເຮົາ
             </Typography>
-            <Typography fontFamily={"NotoSansLaoLooped"} variant="body2">
+            <Typography
+              variant="body2"
+              sx={{ fontFamily: "NotoSansLaoLooped", color: theme.palette.text.secondary }}
+            >
               ທີ່ຢູ່: ບ້ານ ສີຫວາດ ເມືອງ ຈັນທະບູລີ ແຂວງ ນະຄອນຫຼວງວຽງຈັນ
             </Typography>
-            <Typography fontFamily={"NotoSansLaoLooped"} variant="body2">
+            <Typography
+              variant="body2"
+              sx={{ fontFamily: "NotoSansLaoLooped", color: theme.palette.text.secondary }}
+            >
               ໂທ: 021-223-822, 020 589 790 79
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ fontFamily: "NotoSansLaoLooped", color: theme.palette.text.secondary }}
+            >
+              ອີເມວຕິດຕໍ່: svistinotitution.info@gmail.com
             </Typography>
           </Grid>
         </Grid>
 
-        <Divider sx={{ my: 1, bgcolor: "rgba(255, 255, 255, 0.1)" }} />
+        <Divider sx={{ my: 3, bgcolor: theme.palette.divider }} />
 
         <Typography
           variant="body2"
-          color="inherit"
           align="center"
-          sx={{ mt: 2 }}
+          sx={{
+            mt: 2,
+            fontFamily: "NotoSansLaoLooped",
+            color: theme.palette.text.secondary,
+          }}
         >
-          &copy; {new Date().getFullYear()} ສະຖາບັນທຸລະກິດແສງສະຫວັນ.
+          &copy; {new Date().getFullYear()} ສະຖາບັນທຸລະກິດແສງສະຫວັນ
         </Typography>
       </Container>
     </Box>

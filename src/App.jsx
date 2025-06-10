@@ -313,6 +313,11 @@ export default function App() {
           />
         }
       />
+        {/* ✅ จับทุก route ที่ไม่มี match ด้านบน */}
+          <Route
+            path="*"
+            element={<NotFoundPage message="404: page not found" />}
+          />
         </Routes>
       </Layout>
     </Router>

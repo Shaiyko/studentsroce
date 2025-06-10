@@ -75,7 +75,7 @@ export default function Dashboard() {
             borderRadius: 2,
             flex: 1,
             textAlign: "center",
-            bgcolor: "#035b26",
+            bgcolor: "success.light",
             color: "secondary.contrastText",
             boxShadow: 3,
             "&:hover": {
