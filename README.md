@@ -1,12 +1,71 @@
-# React + Vite
+# 🧑‍🎓 studentsroce
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**studentsroce** is a React-based web application designed to manage or interact with student-related data. The project leverages modern front-end technologies and tools for optimal performance and development experience.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 19 with React Router v7 for seamless navigation
+- Firebase integration (Auth or Firestore)
+- Material UI (v7) for professional UI components
+- SweetAlert2 for elegant alert popups
+- Axios for simplified API calls
+- ESLint for code quality
 
-## Expanding the ESLint configuration
+## 🧰 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Category      | Tools / Libraries                     |
+|---------------|----------------------------------------|
+| Frontend      | React, React Router DOM, MUI (v7), Emotion |
+| Backend (API) | Firebase (likely Auth/Firestore)       |
+| Build Tool    | Vite                                   |
+| Alerts        | SweetAlert2                            |
+| HTTP Client   | Axios                                  |
+| Linting       | ESLint + React Hooks plugin            |
+
+## 📦 Installation
+
+```bash
+git clone https://github.com/Shaiyko/studentsroce.git
+cd studentsroce
+npm install
+```
+
+## 💻 Development
+
+```bash
+npm run dev
+```
+
+## 🏗️ Build
+
+```bash
+npm run build
+```
+
+## 🔍 Preview Production
+
+```bash
+npm run preview
+```
+
+## 🧹 Linting
+
+```bash
+npm run lint
+```
+
+## 📁 Project Structure
+
+- `src/`: React source code
+- `public/`: Static files
+- `firebase/`: Firebase-related config (if any)
+- `vite.config.js`: Vite config
+- `.eslintrc`: ESLint configuration
+
+## 📜 License
+
+This project is private (as marked in `package.json`). Not intended for public distribution without permission.
+
+---
+
+> Made with ❤️ using React + Vite
