@@ -6,6 +6,6 @@ const apisheets = "https://sheetapi-vw0g.onrender.com";
 const apisheetgo = "https://sheetapigo.onrender.com";
 const apisheetlocal = "http://localhost:4002";
 
-export const apisroot = apigo;
-export const apisheet = apisheetgo;
+export const apisroot = apisl;
+export const apisheet = apisheetlocal;
 export const apiemail = "https://gmail-api-pefn.onrender.com";

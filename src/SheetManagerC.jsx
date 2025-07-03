@@ -22,7 +22,7 @@ import SkeletonLoaderComponent from "./loding/loading";
 
 function SheetManagerC() {
   const [selectedId, setSelectedId] = useState(
-    "1vljM5p2_vEQXxoadH7-_pq-Saexe1irrvDDZ9Ug6UFg"
+    "1aY6ubcrUwE0Rnijuv13VG7Y4OMuJo1s0Zyaali63UlI"
   );
   const [allSheetData, setAllSheetData] = useState([]);
 
@@ -31,11 +31,15 @@ function SheetManagerC() {
   const [selectedeparment, setSelectedeparment] = useState("");
 
   const [showOnlySelectedStudent, setShowOnlySelectedStudent] = useState(true);
+  // เพิ่ม state สำหรับกรองสถานะและการจ่ายเงิน
+  const [showOnlyWithStatus, setShowOnlyWithStatus] = useState(false);
+  const [showOnlyWithPayment, setShowOnlyWithPayment] = useState(false);
 
   const [subjectOptions, setSubjectOptions] = useState([]);
   const [studentOptions, setStudentOptions] = useState([]);
   const [departmentOptions, setDepartmentOptions] = useState([]);
   const [loading, setLoading] = useState(false);
+  
   useEffect(() => {
     handleSelectSpreadsheet();
   }, [selectedId]);
@@ -106,72 +110,99 @@ function SheetManagerC() {
     }
   };
 
-  const filterData = (sheet) => {
-    if (!sheet.data || sheet.data.length === 0) return [];
-    const [header, ...rows] = sheet.data;
-    const keys = header;
-    const dataObjects = rows.map((row) =>
-      keys.reduce((obj, key, idx) => {
-        obj[key.trim()] = row[idx]?.toString().trim() ?? "";
-        return obj;
-      }, {})
-    );
 
-    let filtered = dataObjects;
+const filterData = (sheet) => {
+  if (!sheet.data || sheet.data.length === 0) return [];
+  const [header, ...rows] = sheet.data;
+  const keys = header;
+  const dataObjects = rows.map((row) =>
+    keys.reduce((obj, key, idx) => {
+      obj[key.trim()] = row[idx]?.toString().trim() ?? "";
+      return obj;
+    }, {})
+  );
 
-    if (selectedStudent) {
-      const selectedName = selectedStudent.replace(/\s/g, "").toLowerCase();
-      if (showOnlySelectedStudent) {
-        filtered = filtered.filter((row) => {
-          const studentName = row["StudentName"]
-            ?.replace(/\s/g, "")
-            .toLowerCase();
-          return studentName === selectedName;
-        });
-      } else {
-        const hasStudent = filtered.some((row) => {
-          const studentName = row["StudentName"]
-            ?.replace(/\s/g, "")
-            .toLowerCase();
-          return studentName === selectedName;
-        });
-        if (!hasStudent) return [];
-      }
+  let filtered = dataObjects;
+
+  if (selectedStudent) {
+    const selectedName = selectedStudent.replace(/\s/g, "").toLowerCase();
+    if (showOnlySelectedStudent) {
+      filtered = filtered.filter((row) => {
+        const studentName = row["StudentName"]
+          ?.replace(/\s/g, "")
+          .toLowerCase();
+        return studentName === selectedName;
+      });
+    } else {
+      const hasStudent = filtered.some((row) => {
+        const studentName = row["StudentName"]
+          ?.replace(/\s/g, "")
+          .toLowerCase();
+        return studentName === selectedName;
+      });
+      if (!hasStudent) return [];
     }
-    if (selectedeparment) {
-      const selecteddep = selectedeparment.replace(/\s/g, "").toLowerCase();
-      if (showOnlySelectedStudent) {
-        filtered = filtered.filter((row) => {
-          const departmentName = row["Departments"]
-            ?.replace(/\s/g, "")
-            .toLowerCase();
-          return departmentName === selecteddep;
-        });
-      } else {
-        const hasDep = filtered.some((row) => {
-          const departmentName = row["Departments"]
-            ?.replace(/\s/g, "")
-            .toLowerCase();
-          return departmentName === selecteddep;
-        });
-        if (!hasDep) return [];
-      }
-    }
+  }
 
-    if (filterSubject.length > 0) {
+  if (selectedeparment) {
+    const selecteddep = selectedeparment.replace(/\s/g, "").toLowerCase();
+    if (showOnlySelectedStudent) {
+      filtered = filtered.filter((row) => {
+        const departmentName = row["Departments"]
+          ?.replace(/\s/g, "")
+          .toLowerCase();
+        return departmentName === selecteddep;
+      });
+    } else {
+      const hasDep = filtered.some((row) => {
+        const departmentName = row["Departments"]
+          ?.replace(/\s/g, "")
+          .toLowerCase();
+        return departmentName === selecteddep;
+      });
+      if (!hasDep) return [];
+    }
+  }
+
+  if (filterSubject.length > 0) {
+    filtered = filtered.filter((row) => {
+      const rowSubjects = row["SubName"]
+        ?.split("+")
+        .map((s) => s.trim().toLowerCase()) || [];
+      return filterSubject.some((selected) =>
+        rowSubjects.includes(selected.toLowerCase())
+      );
+    });
+  }
+
+  // เงื่อนไขกรอง: ถ้ายังไม่ติ๊กอะไรเลย → ซ่อนแถวที่มีทั้ง paid และ status
+if (!showOnlyWithStatus && !showOnlyWithPayment) {
   filtered = filtered.filter((row) => {
-    const rowSubjects = row["SubName"]
-      ?.split("+")
-      .map((s) => s.trim().toLowerCase()) || [];
-    return filterSubject.some((selected) =>
-      rowSubjects.includes(selected.toLowerCase())
-    );
+    const paid = row["paid"] || row["ຈ່າຍແລ້ວ"] || "";
+    const status = row["status_academic"] || row["ສະຖານນະ"] || "";
+    return !(paid && status); // ❌ ซ่อนแถวที่มีทั้งสอง
+  });
+}
+
+// ถ้าติ๊ก checkbox → ใช้กรองตามนั้น ไม่ซ่อนอะไร
+if (showOnlyWithStatus) {
+  filtered = filtered.filter((row) => {
+    const status = row["status_academic"] || row["ສະຖານນະ"] || "";
+    return !!status;
+  });
+}
+
+if (showOnlyWithPayment) {
+  filtered = filtered.filter((row) => {
+    const paid = row["paid"] || row["ຈ່າຍແລ້ວ"] || "";
+    return !!paid;
   });
 }
 
 
-    return [keys, ...filtered.map((rowObj) => keys.map((key) => rowObj[key]))];
-  };
+  return [keys, ...filtered.map((rowObj) => keys.map((key) => rowObj[key]))];
+};
+
 
   return (
     <Container>
@@ -278,7 +309,20 @@ function SheetManagerC() {
                 clearOnEscape
                 isOptionEqualToValue={(option, value) => option === value}
               />
+            </Box>
 
+            {/* เพิ่ม Box สำหรับ Checkbox กรอง */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2,
+                flexWrap: "wrap",
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <FormControlLabel
                 control={
                   <Checkbox
@@ -289,6 +333,32 @@ function SheetManagerC() {
                   />
                 }
                 label="ສະແດງແຕ່ນັກສຶກສາ ທີ່ເລືອກ"
+                sx={{ whiteSpace: "nowrap" }}
+              />
+
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={showOnlyWithStatus}
+                    onChange={(e) =>
+                      setShowOnlyWithStatus(e.target.checked)
+                    }
+                  />
+                }
+                label="ສະແດງແຕ່ຂໍ້ມູນທີ່ມີສະຖານນະວ່າຮຽນແລ້ວ"
+                sx={{ whiteSpace: "nowrap" }}
+              />
+
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={showOnlyWithPayment}
+                    onChange={(e) =>
+                      setShowOnlyWithPayment(e.target.checked)
+                    }
+                  />
+                }
+                label="ສະແດງແຕ່ຂໍ້ມູນທີ່ຈ່າຍແລ້ວ"
                 sx={{ whiteSpace: "nowrap" }}
               />
             </Box>
@@ -340,6 +410,8 @@ function SheetManagerC() {
                           <TableCell sx={{ color: "black" }}>ຊັ້ນປີ</TableCell>
                           <TableCell sx={{ color: "black" }}>ສາຂາ</TableCell>
                           <TableCell sx={{ color: "black" }}>ຄະແນນ</TableCell>
+                          <TableCell sx={{ color: "black" }}>ຈ່າຍແລ້ວ</TableCell>
+                          <TableCell sx={{ color: "black" }}>ສະຖານນະ</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -375,7 +447,6 @@ function SheetManagerC() {
                                   {cell}
                                 </TableCell>
                               ))}
-                          
                             </TableRow>
                           );
                         })}

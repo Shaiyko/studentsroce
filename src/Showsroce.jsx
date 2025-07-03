@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Grid,
   TextField,
@@ -20,73 +20,88 @@ import {
   FormControlLabel,
   FormGroup,
   Box,
-  Alert, // เพิ่ม Alert สำหรับแสดง error
+  Alert,
+  Snackbar,
+  Tooltip,
+  Card,
+  CardContent,
+  FormControl,
+  InputLabel,
+  Fade,
+  Divider,
 } from "@mui/material";
+import CachedIcon from "@mui/icons-material/Cached";
+import ClearIcon from "@mui/icons-material/Clear";
+import SearchIcon from "@mui/icons-material/Search";
+import SchoolIcon from "@mui/icons-material/School";
+import PersonIcon from "@mui/icons-material/Person";
+import GradeIcon from "@mui/icons-material/Grade";
 import SkeletonLoaderComponent from "./loding/loading";
-import { apisheet, apisroot } from "./URL";
+import { apisroot } from "./URL"; // Removed unused apisheet
 
 const deps = [
-  {
-    id: 1,
-    name: "ສາຂາວິຊາ ບໍລິຫານ ທຸລະກິດຕໍ່ເນື່ອງ",
-  },
-  {
-    id: 2,
-    name: "ສາຂາວິຊາ ການຄ້າເອເລັກໂຕນິກ (ຄອມພິວເຕອທຸລະກິດ)",
-  },
-  {
-    id: 3,
-    name: "ສາຂາວິຊາ ຜູ້ປະກອບການ",
-  },
-  {
-    id: 4,
-    name: "ສາຂາວິຊາ ພາສາອັງກິດ",
-  },
-  {
-    id: 5,
-    name: "ສາຂາວິຊາ ວິຊະວະກຳຊອບແວ",
-  },
-  {
-    id: 6,
-    name: "ສາຂາວິຊາ ບໍລິຫານ ທຸລະກິດ",
-  },
-  {
-    id: 7,
-    name: "ສາຂາວິຊາ ພາສາອັງກິດຕໍ່ເນື່ອງ",
-  },
+  { id: 1, name: "ສາຂາວິຊາ ບໍລິຫານ ທຸລະກິດຕໍ່ເນື່ອງ" },
+  { id: 2, name: "ສາຂາວິຊາ ການຄ້າເອເລັກໂຕນິກ (ຄອມພິວເຕອທຸລະກິດ)" },
+  { id: 3, name: "ສາຂາວິຊາ ຜູ້ປະກອບການ" },
+  { id: 4, name: "ສາຂາວິຊາ ພາສາອັງກິດ" },
+  { id: 5, name: "ສາຂາວິຊາ ວິຊະວະກຳຊອບແວ" },
+  { id: 6, name: "ສາຂາວິຊາ ບໍລິຫານ ທຸລະກິດ" },
+  { id: 7, name: "ສາຂາວິຊາ ພາສາອັງກິດຕໍ່ເນື່ອງ" },
 ];
 
 export default function StudentSearchExport() {
+  // --- State Definitions ---
   const [allData, setAllData] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
   const [students, setStudents] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
+  const [searchPerformed, setSearchPerformed] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const [filters, setFilters] = useState({
     department_id: "",
     classroom_id: "",
     student: "",
     score: "",
   });
+
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [showWithScore, setShowWithScore] = useState(true);
   const [showWithoutScore, setShowWithoutScore] = useState(false);
-  const [loading, setLoading] = useState(false);
+
   const [errorMessages, setErrorMessages] = useState({
-    // State สำหรับเก็บ error
     department: "",
     classroom: "",
     student: "",
     general: "",
   });
 
-  useEffect(() => {
-    setLoading(true);
-    fetch(`${apisroot}/from-sheet-all`)
-      .then((res) => res.json())
-      .then((data) => {
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
+
+  // --- Callback Functions for Performance ---
+
+  const showSnackbar = useCallback((message, severity = "success") => {
+    setSnackbar({ open: true, message, severity });
+  }, []);
+
+  const handleCloseSnackbar = useCallback((event, reason) => {
+    if (reason === "clickaway") return;
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  }, []);
+
+  const fetchAllData = useCallback(async () => {
+    try {
+      const res = await fetch(`${apisroot}/from-sheet-all`);
+      const data = await res.json();
+
+      if (data.success && data.sheets) {
         const sheets = data.sheets || [];
         setAllData(sheets);
 
@@ -103,31 +118,60 @@ export default function StudentSearchExport() {
         const filteredDeps = deps
           .filter((dep) => depSet.has(dep.id))
           .map((dep) => ({ department_id: dep.id, name: dep.name }));
+
         setDepartments(filteredDeps);
         setClassrooms([...clsSet]);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("ໂຫລດຂໍ້ມູນບໍ່ໄດ້", err);
-        setErrorMessages((prev) => ({
-          ...prev,
-          general: "ບໍ່ສາມາດໂຫລດຂໍ້ມູນຫຼັກໄດ້, ກະລຸນາລອງໃໝ່ອີກຄັ້ງ.",
-        }));
-        setLoading(false);
+        showSnackbar("ໂຫລດຂໍ້ມູນສຳເລັດ", "success");
+      } else {
+        throw new Error("ຂໍ້ມູນບໍ່ຖືກຕ້ອງ");
+      }
+    } catch (err) {
+      console.error("ໂຫລດຂໍ້ມູນບໍ່ໄດ້", err);
+      setErrorMessages((prev) => ({
+        ...prev,
+        general: "ບໍ່ສາມາດໂຫລດຂໍ້ມູນຫຼັກໄດ້, ກະລຸນາລອງໃໝ່ອີກຄັ້ງ.",
+      }));
+      showSnackbar("ໂຫລດຂໍ້ມູນບໍ່ສຳເລັດ", "error");
+    } finally {
+      setLoading(false);
+    }
+  }, [showSnackbar]);
+
+  const clearCache = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${apisroot}/clear-cache`, {
+        method: "DELETE",
       });
-  }, []);
+      const result = await response.json();
+
+      if (result.success) {
+        showSnackbar("ລ້າງ Cache ສຳເລັດ, ກำลังໂຫລດຂໍ້ມູນໃໝ່...", "success");
+        await fetchAllData(); // Use fetchAllData instead of undefined loadData
+      } else {
+        showSnackbar("ການລ້າງ Cache ຜິດພາດ", "error");
+      }
+    } catch (error) {
+      console.error("Error clearing cache:", error);
+      showSnackbar("ການລ້າງ Cache ຜິດພາດ", "error");
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchAllData, showSnackbar]);
+
+  useEffect(() => {
+    fetchAllData();
+  }, [fetchAllData]);
 
   useEffect(() => {
     if (!filters.department_id || !filters.classroom_id) {
       setStudents([]);
       setSubjects([]);
-      // ไม่ต้องเคลียร์ filteredStudents ที่นี่ เพราะจะถูกจัดการใน handleSearch
       return;
     }
 
     const currentStudents = [];
     const subjSet = new Set();
-
     allData.forEach((sheet) => {
       sheet.students.forEach((student) => {
         if (
@@ -144,32 +188,53 @@ export default function StudentSearchExport() {
     setSubjects([...subjSet]);
   }, [filters.department_id, filters.classroom_id, allData]);
 
-  const getAvailableClassrooms = () => {
-    if (!filters.department_id) return [];
-    return classrooms
-      .filter((key) => key.startsWith(filters.department_id + "|"))
-      .map((key) => key.split("|")[1]);
-  };
-
-  useEffect(() => {
-    // ทำการค้นหาเมื่อ checkbox เปลี่ยนแปลง *ถ้า* มีการค้นหาครั้งล่าสุดแล้ว
-    if (filteredStudents.length > 0 || errorMessages.general === "") {
-      // ตรวจสอบว่าเคยค้นหาแล้วหรือยังไม่มี error
-      // หรือถ้าต้องการให้ค้นหาใหม่ทุกครั้งที่ checkbox เปลี่ยน โดยไม่สนใจว่าเคยค้นหาไหม
-      // ให้เรียก handleSearch() โดยตรง แต่ต้องระวังเรื่องการ validate อีกรอบ
-      // ในที่นี้จะยังไม่เรียก handleSearch อัตโนมัติเมื่อ checkbox เปลี่ยน เพื่อให้ user กดค้นหาเอง
-    }
-  }, [showWithScore, showWithoutScore]);
-
-  const validateInputs = () => {
-    let valid = true;
-    const newErrors = {
+  const refreshData = () => {
+    setLoading(true);
+    setAllData([]);
+    setFilteredStudents([]);
+    setSearchPerformed(false);
+    setFilters({ department_id: "", classroom_id: "", student: "", score: "" });
+    setSelectedSubjects([]);
+    setErrorMessages({
       department: "",
       classroom: "",
       student: "",
       general: "",
-    };
+    });
+    fetchAllData();
+  };
 
+  const handleFilterChange = (field, value) => {
+    const newFilters = { ...filters, [field]: value };
+
+    if (field === "department_id") {
+      newFilters.classroom_id = "";
+      newFilters.student = "";
+      setStudents([]);
+      setSubjects([]);
+      setFilteredStudents([]);
+      setSearchPerformed(false);
+      setErrorMessages((prev) => ({ ...prev, classroom: "", student: "" }));
+    }
+    if (field === "classroom_id") {
+      newFilters.student = "";
+      setStudents([]);
+      setFilteredStudents([]);
+      setSearchPerformed(false);
+      setErrorMessages((prev) => ({ ...prev, student: "" }));
+    }
+    if (field === "student") {
+      setFilteredStudents([]);
+      setSearchPerformed(false);
+    }
+
+    setFilters(newFilters);
+    if (value) setErrorMessages((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const validateInputs = () => {
+    let valid = true;
+    const newErrors = { department: "", classroom: "", student: "" };
     if (!filters.department_id) {
       newErrors.department = "ກະລຸນາເລືອກສາຂາວິຊາ.";
       valid = false;
@@ -188,26 +253,36 @@ export default function StudentSearchExport() {
 
   const handleSearch = () => {
     if (!validateInputs()) {
-      setFilteredStudents([]); // เคลียร์ผลลัพธ์ถ้า input ไม่ถูกต้อง
+      showSnackbar("ກະລຸນາຕື່ມຂໍ້ມູນໃຫ້ຄົບຖ້ວນ", "warning");
       return;
     }
-    setErrorMessages({
-      department: "",
-      classroom: "",
-      student: "",
-      general: "",
-    }); // เคลียร์ error เมื่อ input ถูกต้อง
+    setSearchPerformed(true);
 
     const result = allData.flatMap((sheet) =>
       sheet.students
+        .filter((student) => {
+          const studentName = (student.name || "").toLowerCase().trim();
+          const searchName = (filters.student || "").toLowerCase().trim();
+          return (
+            String(student.department_id) === String(filters.department_id) &&
+            String(student.classroom_id) === String(filters.classroom_id) &&
+            (studentName.includes(searchName) ||
+              searchName.includes(studentName))
+          );
+        })
         .map((student) => ({
           ...student,
-          sheet: sheet.sheet,
           subjects: student.subjects.filter((subject) => {
+            const subjectName = subject.subject_name.toLowerCase();
+            const hasScore =
+              subject.score !== "" && subject.score !== "ຍັງບໍ່ມີຄະແນນ";
+            const matchCheckbox =
+              (hasScore && showWithScore) || (!hasScore && showWithoutScore);
             const matchSubject =
               selectedSubjects.length === 0 ||
-              selectedSubjects.includes(subject.subject_name);
-
+              selectedSubjects.some((sel) =>
+                subjectName.includes(sel.toLowerCase())
+              );
             const matchScore =
               !filters.score ||
               filters.score
@@ -215,388 +290,505 @@ export default function StudentSearchExport() {
                 .some((s) =>
                   String(subject.score)
                     .toUpperCase()
-                    .startsWith(s.trim().toUpperCase())
+                    .includes(s.trim().toUpperCase())
                 );
-
-            const hasScore =
-              subject.score !== "" &&
-              subject.score !== null &&
-              subject.score !== undefined &&
-              subject.score !== "ຍັງບໍ່ມີຄະແນນ";
-
-            const matchCheckbox =
-              (hasScore && showWithScore) || (!hasScore && showWithoutScore);
-
-            return matchSubject && matchScore && matchCheckbox;
+            return matchCheckbox && matchSubject && matchScore;
           }),
         }))
-        .filter((student) => {
-          const matchDepartment =
-            !filters.department_id ||
-            student.department_id === filters.department_id;
-          const matchClassroom =
-            !filters.classroom_id ||
-            student.classroom_id === filters.classroom_id;
-          const matchStudent =
-            !filters.student || student.name.includes(filters.student); // แก้เป็น .includes เพื่อการค้นหาบางส่วน
-          return (
-            matchDepartment &&
-            matchClassroom &&
-            matchStudent &&
-            student.subjects.length > 0
-          );
-        })
+        .filter((student) => student.subjects.length > 0)
     );
+
     setFilteredStudents(result);
-    if (result.length === 0) {
-      // setErrorMessages(prev => ({ ...prev, general: "ບໍ່ພົບຂໍ້ມູນຕາມເງື່ອນໄຂທີ່ລະບຸ."}));
-      // การแสดง "ບໍ່ມີຂໍ້ມູນ" ในตารางก็เพียงพอแล้ว อาจจะไม่ต้อง set error message ตรงนี้
-    }
-  };
-  const allowedValues = ["0", "1", "2", "3", "4", "I"];
-
-  const handleScoreChange = (e) => {
-    const input = e.nativeEvent.data?.toUpperCase();
-    if (!input && e.target.value !== filters.score) {
-      // Handle deletion or direct paste
-      const newScoreValue = e.target.value
-        .toUpperCase()
-        .split(",")
-        .map((s) => s.trim())
-        .filter((s) => allowedValues.includes(s) || s === "")
-        .join(",");
-      setFilters({ ...filters, score: newScoreValue });
-      return;
-    }
-    if (!input) return;
-
-    if (!allowedValues.includes(input)) {
-      return;
-    }
-
-    let current = filters.score;
-
-    if (current === "") {
-      current = input;
-    } else if (current.endsWith(",")) {
-      current += input;
+    if (result.length > 0) {
+      showSnackbar(`ພົບຂໍ້ມູນ ${result.length} ລາຍການ`, "success");
     } else {
-      current += `,${input}`;
+      showSnackbar("ບໍ່ພົບຂໍ້ມູນຕາມເງື່ອນໄຂທີ່ຄົ້ນຫາ", "info");
     }
-
-    setFilters({ ...filters, score: current });
   };
 
-  const handleFilterChange = (field, value) => {
-    const newFilters = { ...filters, [field]: value };
-    if (field === "department_id") {
-      newFilters.classroom_id = ""; // Reset classroom when department changes
-      newFilters.student = ""; // Reset student
-      setStudents([]); // Clear student options
-      setSubjects([]); // Clear subject options
-      setFilteredStudents([]); // Clear search results
-      setErrorMessages((prev) => ({ ...prev, classroom: "", student: "" }));
-    }
-    if (field === "classroom_id") {
-      newFilters.student = ""; // Reset student when classroom changes
-      setStudents([]); // Clear student options (จะถูก populate ใหม่ใน useEffect)
-      setFilteredStudents([]); // Clear search results
-      setErrorMessages((prev) => ({ ...prev, student: "" }));
-    }
-    setFilters(newFilters);
-    // Clear specific error when user starts typing/selecting
-    if (field === "department_id" && value)
-      setErrorMessages((prev) => ({ ...prev, department: "" }));
-    if (field === "classroom_id" && value)
-      setErrorMessages((prev) => ({ ...prev, classroom: "" }));
-    // student error จะถูก clear ใน onInputChange ของ Autocomplete
+const handleScoreChange = (e) => {
+  let value = e.target.value.toUpperCase().replace(/\s+/g, "");
+
+  // แยกตัวอักษรโดยไม่เอา ,
+  const rawChars = value.replace(/,/g, "").split("");
+
+  // กรองเฉพาะ 1-4 และ I
+  const validChars = rawChars.filter((char) => ["1", "2", "3", "4", "I"].includes(char));
+
+  // สร้าง string ใหม่พร้อมใส่ , ทุกตัว
+  const formatted = validChars.join(",");
+
+  setFilters({ ...filters, score: formatted });
+};
+
+
+  const getAvailableClassrooms = () => {
+    if (!filters.department_id) return [];
+    const available = classrooms
+      .filter((key) => key.startsWith(filters.department_id + "|"))
+      .map((key) => key.split("|")[1])
+      .sort((a, b) => a - b);
+    return [...new Set(available)]; // Ensure unique values
   };
 
+  // --- JSX Rendering ---
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" sx={{ py: 4 }}>
       <SkeletonLoaderComponent loading={loading} />
+
       {errorMessages.general && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {errorMessages.general}
-        </Alert>
+        <Fade in={!!errorMessages.general}>
+          <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+            {errorMessages.general}
+          </Alert>
+        </Fade>
       )}
+
       {allData.length > 0 && !loading && (
         <>
-          <Typography variant="h5" gutterBottom>
-            📚 ຄົ້ນຫາຄະແນນນັກສຶກສາ
-          </Typography>
-          <Box
+          {/* Header */}
+          <Card
             sx={{
-              display: "flex",
-              flexDirection: { xs: "column", sm: "row" },
-              gap: 2,
-              flexWrap: "wrap",
-              width: "100%",
-              justifyContent: "center",
-              alignItems: "flex-start",
+              mb: 4,
+              background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             }}
           >
-            <Select
-              fullWidth
-              value={filters.department_id}
-              onChange={(e) =>
-                handleFilterChange("department_id", String(e.target.value))
-              }
-              displayEmpty
-              error={!!errorMessages.department}
-            >
-              <MenuItem value="">-- ເລືອກສາຂາວິຊາ --</MenuItem>
-              {departments.map((dep) => (
-                <MenuItem key={dep.department_id} value={dep.department_id}>
-                  {dep.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {errorMessages.department && (
-              <Typography color="error" variant="caption">
-                {errorMessages.department}
-              </Typography>
-            )}
+            <CardContent>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 2,
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <SchoolIcon sx={{ fontSize: 40, color: "white" }} />
+                  <Typography
+                    variant="h4"
+                    component="h1"
+                    sx={{ color: "white", fontWeight: "bold" }}
+                  >
+                    ຄົ້ນຫາຄະແນນນັກສຶກສາ
+                  </Typography>
+                </Box>
 
-            <Select
-              fullWidth
-              value={filters.classroom_id}
-              onChange={(e) =>
-                handleFilterChange("classroom_id", String(e.target.value))
-              }
-              displayEmpty
-              disabled={!filters.department_id}
-              error={!!errorMessages.classroom}
-            >
-              <MenuItem value="">-- ເລືອກຫ້ອງ --</MenuItem>
-              {getAvailableClassrooms().map((cls) => (
-                <MenuItem key={cls} value={cls}>
-                  ຫ້ອງ {cls}
-                </MenuItem>
-              ))}
-            </Select>
-            {errorMessages.classroom && (
-              <Typography color="error" variant="caption">
-                {errorMessages.classroom}
-              </Typography>
-            )}
-
-            <Autocomplete
-              freeSolo
-              fullWidth
-              options={students} // แสดงรายชื่อนักเรียนที่ filter มาแล้ว
-              value={filters.student}
-              onInputChange={(event, newValue) => {
-                setFilters({ ...filters, student: newValue });
-                setFilteredStudents([]); // Clear search results when student changes
-                if (newValue && newValue.trim() !== "") {
-                  setErrorMessages((prev) => ({ ...prev, student: "" })); // เคลียร์ error เมื่อมีการพิมพ์
-                }
-              }}
-              disabled={!filters.classroom_id} // Disable ถ้ายังไม่ได้เลือกห้อง
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="ຊື່ນັກສຶກສາ"
-                  error={!!errorMessages.student}
-                  helperText={errorMessages.student}
-                />
-              )}
-              sx={{ minWidth: 180 }}
-            />
-
-            <Autocomplete
-              multiple
-              freeSolo
-              fullWidth
-              options={subjects}
-              value={selectedSubjects}
-              inputValue={inputValue}
-              onInputChange={(e, newInput) => setInputValue(newInput)}
-              onChange={(e, newValue) => setSelectedSubjects(newValue)}
-              disabled={!filters.student} // อาจจะ disable ถ้ายังไม่ได้เลือกนักเรียน
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    variant="outlined"
-                    label={option}
-                    {...getTagProps({ index })}
-                    sx={{ margin: 0.5 }}
-                    key={index}
-                  />
-                ))
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="ວິຊາ (ບໍ່ບັງຄັບເລືອກ)"
-                  placeholder="ພີມຊື່ວິຊາ ຫຼື ບໍ່ເລືອກກໍໄດ້"
-                />
-              )}
-            />
-
-            <TextField
-              fullWidth
-              sx={{ fontFamily: "NotoSansLaoLooped", width: "100%" }} //ปรับ width ให้เต็ม
-              label="ຄະແນນ (ບໍ່ບັງຄັບເລືອກ)"
-              placeholder="0,1,2,3,4,I"
-              value={filters.score}
-              onChange={handleScoreChange}
-              disabled={!filters.student} // อาจจะ disable ถ้ายังไม่ได้เลือกนักเรียน
-            />
-
-            <Button variant="contained" onClick={handleSearch}>
-              ກົດຄົ້ນຫາ
-            </Button>
-
-            <FormGroup row>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showWithScore}
-                    onChange={(e) => setShowWithScore(e.target.checked)}
-                    disabled={!filters.student} // อาจจะ disable ถ้ายังไม่ได้เลือกนักเรียน
-                  />
-                }
-                label="ສະແດງວິຊາທີ່ມີຄະແນນ"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showWithoutScore}
-                    onChange={(e) => setShowWithoutScore(e.target.checked)}
-                    disabled={!filters.student} // อาจจะ disable ถ้ายังไม่ได้เลือกนักเรียน
-                  />
-                }
-                label="ສະແດງວິຊາທີ່ບໍ່ມີຄະແນນ"
-              />
-            </FormGroup>
-          </Box>
-          {/* แสดงข้อมูลนักเรียนที่ถูก filter */}
-          {/* ปรับปรุงการแสดงผล filteredStudents ให้แสดงข้อมูลนักเรียนคนเดียว */}
-          {filteredStudents.length > 0 && (
-            <>
-              {/* แสดงข้อมูลสรุปของนักเรียนที่ค้นหาเจอ */}
-              {/* เนื่องจาก filteredStudents อาจมีหลายรายการ (ถ้าชื่อซ้ำกันข้าม sheet)
-                 แต่ตาม logic การ filter ด้วย department, classroom, student name ควรจะเหลือคนเดียว
-                 หรือกลุ่มเล็กๆ ที่ชื่อคล้ายกันมากๆ ถ้าการ filter student name ไม่ได้ match แบบตรงตัว
-                 ในที่นี้จะแสดงข้อมูลของคนแรกที่เจอ หรือถ้าต้องการให้แน่ใจว่ามีคนเดียว อาจจะต้องปรับ logic การ filter student name ให้เข้มงวดขึ้น
-             */}
-              {filters.student &&
-                filteredStudents.slice(0, 1).map(
-                  (
-                    student,
-                    i // แสดงเฉพาะข้อมูลของนักเรียนคนแรกที่ตรงเงื่อนไข
-                  ) => (
-                    <Box
-                      key={`student-info-${i}`}
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <Tooltip title="ລ້າງຂໍ້ມູນທັງໝົດ">
+                    <Button
+                      variant="outlined"
+                      color="inherit"
+                      onClick={refreshData}
+                      startIcon={<ClearIcon />}
                       sx={{
-                        border: "1px solid #ccc",
-                        borderRadius: 2,
-                        padding: 2,
-                        marginBottom: 2,
-                        backgroundColor: "#f9f9f9",
-                        color: "black",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexDirection: "column",
-                        textAlign: "center",
+                        color: "white",
+                        borderColor: "white",
+                        "&:hover": {
+                          borderColor: "white",
+                          backgroundColor: "rgba(255,255,255,0.1)",
+                        },
                       }}
                     >
-                      <Box>
-                        <strong>ຊື່: </strong> {student.name}
-                      </Box>
+                      ລ້າງ
+                    </Button>
+                  </Tooltip>
 
-                      <Box>
-                        <strong>ຫ້ອງຮຽນ: </strong> {student.classroom_id}
-                      </Box>
-
-                      <Box>
-                        <strong>ສາຂາວິຊາ: </strong>
-
-                        {deps.find(
-                          (dep) => String(dep.id) === student.department_id
-                        )?.name || "ບໍ່ພົບຂໍ້ມູນ"}
-                      </Box>
-                    </Box>
-                  )
-                )}
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow
+                  <Tooltip title="ດືງຂໍ້ມູນອັບເດດໃໝ່">
+                    <Button
+                      variant="contained"
+                      onClick={clearCache}
+                      startIcon={<CachedIcon />}
+                      disabled={loading}
                       sx={{
-                        backgroundColor: "text.secondary",
-                        fontWeight: "bold",
-                        fontSize: "16px",
-                        color: "white", // หรือ "black" ขึ้นกับ background
+                        backgroundColor: "white",
+                        color: "#667eea",
+                        "&:hover": { backgroundColor: "rgba(255,255,255,0.9)" },
                       }}
                     >
-                      <TableCell
-                        align="center"
-                        sx={{ fontWeight: "bold", fontSize: "16px" }}
-                      >
-                        ລ/ດ
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        sx={{ fontWeight: "bold", fontSize: "16px" }}
-                      >
-                        ຊື່ວິຊາ
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        sx={{ fontWeight: "bold", fontSize: "16px" }}
-                      >
-                        ຄະແນນ
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
+                      ອັບເດດ
+                    </Button>
+                  </Tooltip>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
 
-                  <TableBody>
-                    {filteredStudents.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={3} align="center">
-                          {errorMessages.department ||
-                          errorMessages.classroom ||
-                          errorMessages.student
-                            ? "ກະລຸນາເລືອກຂໍ້ມູນໃຫ້ຄົບຖ້ວນກ່ອນກົດຄົ້ນຫາ"
-                            : "ບໍ່ມີຂໍ້ມູນວິຊາ"}
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      filteredStudents
-                        .flatMap((student) => student.subjects)
-                        .map((subject, j) => (
-                          <TableRow key={`subject-${j}`}>
-                            <TableCell align="center">{j + 1}</TableCell>
-                            <TableCell align="center">
-                              {subject.subject_name}
-                            </TableCell>
-                            <TableCell align="center">
-                              {subject.score || "F"}
-                            </TableCell>
-                          </TableRow>
-                        ))
+          {/* Search Filters */}
+          <Card sx={{ mb: 4, boxShadow: 3 }}>
+            <CardContent>
+              <Typography
+                variant="h6"
+                sx={{ mb: 3, display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <SearchIcon color="primary" />
+                ຕົວກອງການຄົ້ນຫາ
+              </Typography>
+
+              <Grid container spacing={3}>
+                {/* Field 1: สาขาวิชา */}
+                <Grid item xs={12}>
+                  <FormControl fullWidth sx={{minWidth: 300}} error={!!errorMessages.department}>
+                    <InputLabel>ສາຂາວິຊາ</InputLabel>
+                    <Select
+                      value={filters.department_id}
+                      onChange={(e) =>
+                        handleFilterChange(
+                          "department_id",
+                          String(e.target.value)
+                        )
+                      }
+                      label="ສາຂາວິຊາ"
+                    >
+                      <MenuItem value="">-- ເລືອກສາຂາວິຊາ --</MenuItem>
+                      {departments.map((dep) => (
+                        <MenuItem
+                          key={dep.department_id}
+                          value={dep.department_id}
+                        >
+                          {dep.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errorMessages.department && (
+                      <Typography
+                        color="error"
+                        variant="caption"
+                        sx={{ mt: 1 }}
+                      >
+                        {errorMessages.department}
+                      </Typography>
                     )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </>
+                  </FormControl>
+                </Grid>
+
+                {/* Field 2: ຫ້ອງ */}
+                <Grid item xs={12}>
+                  <FormControl fullWidth sx={{minWidth: 170}} error={!!errorMessages.classroom}>
+                    <InputLabel>ຫ້ອງ</InputLabel>
+                    <Select
+                      value={filters.classroom_id}
+                      onChange={(e) =>
+                        handleFilterChange(
+                          "classroom_id",
+                          String(e.target.value)
+                        )
+                      }
+                      disabled={!filters.department_id}
+                      label="ຫ້ອງ"
+                    >
+                      <MenuItem value="">-- ເລືອກຫ້ອງ --</MenuItem>
+                      {getAvailableClassrooms().map((cls) => (
+                        <MenuItem key={cls} value={cls}>
+                          ຫ້ອງ {cls}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errorMessages.classroom && (
+                      <Typography
+                        color="error"
+                        variant="caption"
+                        sx={{ mt: 1 }}
+                      >
+                        {errorMessages.classroom}
+                      </Typography>
+                    )}
+                  </FormControl>
+                </Grid>
+
+                {/* Field 3: ຊື່ນັກສຶກສາ */}
+                <Grid item xs={12}>
+                  <Autocomplete
+                  sx={{minWidth: 300}}
+                    freeSolo
+                    options={students}
+                    value={filters.student}
+                    onInputChange={(event, newValue) =>
+                      handleFilterChange("student", newValue || "")
+                    }
+                    disabled={!filters.classroom_id}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="ຊື່ນັກສຶກສາ"
+                        error={!!errorMessages.student}
+                        helperText={errorMessages.student}
+                      />
+                    )}
+                  />
+                </Grid>
+
+                {/* Field 4: ຄະແນນ */}
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="ຄະແນນ"
+                    placeholder="0,1,2,3,4,I"
+                    value={filters.score}
+                    onChange={handleScoreChange}
+                    disabled={!filters.student}
+                    helperText="ບໍ່ບັງຄັບ"
+                  />
+                </Grid>
+
+                {/* Button: ຄົ້ນຫາ */}
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                    onClick={handleSearch}
+                    disabled={
+                      !filters.student || (!showWithScore && !showWithoutScore)
+                    }
+                    startIcon={<SearchIcon />}
+                    sx={{ height: "56px" }}
+                  >
+                    ຄົ້ນຫາ
+                  </Button>
+                </Grid>
+              </Grid>
+
+              <Box sx={{ mt: 3 }}>
+                <Autocomplete
+                  multiple
+                  freeSolo
+                  options={subjects}
+                  value={selectedSubjects}
+                  inputValue={inputValue}
+                  onInputChange={(e, newIn) => setInputValue(newIn)}
+                  onChange={(e, newV) => setSelectedSubjects(newV)}
+                  disabled={!filters.student}
+                  renderTags={(val, getTagProps) =>
+                    val.map((opt, idx) => (
+                      <Chip
+                        variant="outlined"
+                        label={opt}
+                        {...getTagProps({ index: idx })}
+                        key={idx}
+                        sx={{ m: 0.5 }}
+                      />
+                    ))
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="ວິຊາ (ບໍ່ບັງຄັບ)"
+                      placeholder="ເລືອກວິຊາ"
+                    />
+                  )}
+                />
+              </Box>
+
+              <Box sx={{ mt: 3 }}>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                  ຕົວເລືອກການສະແດງຜົນ:
+                </Typography>
+                <FormGroup row>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={showWithScore}
+                        onChange={(e) => setShowWithScore(e.target.checked)}
+                        disabled={!filters.student}
+                      />
+                    }
+                    label="ສະແດງວິຊາທີ່ມີຄະແນນ"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={showWithoutScore}
+                        onChange={(e) => setShowWithoutScore(e.target.checked)}
+                        disabled={!filters.student}
+                      />
+                    }
+                    label="ສະແດງວິຊາທີ່ບໍ່ມີຄະແນນ"
+                  />
+                </FormGroup>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Search Results */}
+          {searchPerformed && (
+            <Fade in={searchPerformed}>
+              <div>
+                {filteredStudents.length > 0 ? (
+                  <>
+                    {/* Student Info Card */}
+                    {filteredStudents.slice(0, 1).map((student, i) => (
+                      <Card
+                        key={`student-info-${i}`}
+                        sx={{ mb: 3, boxShadow: 3 }}
+                      >
+                        <CardContent>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 2,
+                              mb: 2,
+                            }}
+                          >
+                            <PersonIcon color="primary" sx={{ fontSize: 40 }} />
+                            <Typography variant="h5" color="primary">
+                              ຂໍ້ມູນນັກສຶກສາ
+                            </Typography>
+                          </Box>
+                          <Divider sx={{ mb: 2 }} />
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} sm={4}>
+                              <Typography variant="h6">
+                                <strong>ຊື່: </strong>
+                                {student.name}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={4}>
+                              <Typography variant="h6">
+                                <strong>ຫ້ອງຮຽນ: </strong>
+                                {student.classroom_id}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={4}>
+                              <Typography variant="h6">
+                                <strong>ສາຂາວິຊາ: </strong>
+                                {deps.find(
+                                  (dep) =>
+                                    String(dep.id) === student.department_id
+                                )?.name || "ບໍ່ພົບຂໍ້ມູນ"}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                        </CardContent>
+                      </Card>
+                    ))}
+
+                    {/* Scores Table */}
+                    <Card component={Paper} sx={{ boxShadow: 3 }}>
+                      <CardContent>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 2,
+                            mb: 2,
+                          }}
+                        >
+                          <GradeIcon color="primary" sx={{ fontSize: 40 }} />
+                          <Typography variant="h5" color="primary">
+                            ຕາຕະລາງຄະແນນ
+                          </Typography>
+                        </Box>
+                        <Divider sx={{ mb: 2 }} />
+                        <TableContainer>
+                          <Table>
+                            <TableHead>
+                              <TableRow sx={{ backgroundColor: "#1976d2" }}>
+                                <TableCell
+                                  align="center"
+                                  sx={{ fontWeight: "bold", color: "white" }}
+                                >
+                                  ລ/ດ
+                                </TableCell>
+                                <TableCell
+                                  align="left"
+                                  sx={{ fontWeight: "bold", color: "white" }}
+                                >
+                                  ຊື່ວິຊາ
+                                </TableCell>
+                                <TableCell
+                                  align="center"
+                                  sx={{ fontWeight: "bold", color: "white" }}
+                                >
+                                  ຄະແນນ
+                                </TableCell>
+                                <TableCell
+                                  align="left"
+                                  sx={{ fontWeight: "bold", color: "white" }}
+                                >
+                                  ອາຈານ
+                                </TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {filteredStudents
+                                .flatMap((student) => student.subjects)
+                                .map((subject, j) => (
+                                  <TableRow
+                                    key={`subject-${j}`}
+                                    sx={{
+                                      "&:nth-of-type(odd)": {
+                                        backgroundColor: "#f5f5f5",
+                                      },
+                                    }}
+                                  >
+                                    <TableCell align="center">
+                                      {j + 1}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                      {subject.subject_name}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                      <Chip
+                                        label={
+                                          subject.score === "" ||
+                                          subject.score === "ຍັງບໍ່ມີຄະແນນ"
+                                            ? "ຍັງບໍ່ມີຄະແນນ"
+                                            : subject.score
+                                        }
+                                        color={
+                                          subject.score === "" ||
+                                          subject.score === "ຍັງບໍ່ມີຄະແນນ"
+                                            ? "default"
+                                            : "primary"
+                                        }
+                                        variant={
+                                          subject.score === "" ||
+                                          subject.score === "ຍັງບໍ່ມີຄະແນນ"
+                                            ? "outlined"
+                                            : "filled"
+                                        }
+                                      />
+                                    </TableCell>
+                                    <TableCell align="left">
+                                      {subject.teacher_name || "ບໍ່ລະບຸ"}
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      </CardContent>
+                    </Card>
+                  </>
+                ) : (
+                  <Alert severity="info" sx={{ mt: 2 }}>
+                    ບໍ່ພົບຂໍ້ມູນຕາມເງື່ອນໄຂທີ່ຄົ້ນຫາ -
+                    ກະລຸນາຕົວດສອບການປ້ອນຂໍ້ມູນຄືນໃໝ່
+                  </Alert>
+                )}
+              </div>
+            </Fade>
           )}
-          {/* แสดงข้อความ "ບໍ່ມີຂໍ້ມູນ" ถ้าค้นหาแล้วไม่เจอ และไม่มี error อื่นๆ */}
-          {filteredStudents.length === 0 &&
-            !errorMessages.department &&
-            !errorMessages.classroom &&
-            !errorMessages.student &&
-            !errorMessages.general && (
-              <Typography variant="subtitle1" align="center" sx={{ mt: 2 }}>
-                ບໍ່ພົບຂໍ້ມູນຕາມເງື່ອນໄຂທີ່ຄົ້ນຫ
-              </Typography>
-            )}
         </>
       )}
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
