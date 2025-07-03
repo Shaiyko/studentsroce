@@ -309,7 +309,7 @@ export default function StudentSearchExport() {
 const handleScoreChange = (e) => {
   let value = e.target.value.toUpperCase().replace(/\s+/g, "");
 
-  // แยกตัวอักษรโดยไม่เอา ,
+  // ?แยกตัวอักษรโดยไม่เอา , 
   const rawChars = value.replace(/,/g, "").split("");
 
   // กรองเฉพาะ 1-4 และ I
