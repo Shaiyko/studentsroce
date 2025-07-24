@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   Box,
-  Grid,
   TextField,
   MenuItem,
   Button,
@@ -12,7 +11,6 @@ import { apisheet } from "../URL";
 import LoadingComponent from "../loding/loadinglogin";
 import Swal from "sweetalert2";
 
-// Option lists
 const genders = [
   { value: "M", label: "ຊາຍ" },
   { value: "F", label: "ຍິງ" },
@@ -49,26 +47,22 @@ const dep = [
     name: "ສາຂາວິຊາ ພາສາອັງກິດຕໍ່ເນື່ອງ",
   },
 ];
-// ฟังก์ชันช่วยดึงปีการศึกษาปัจจุบัน (เช่น "2025-2026")
+
 const getCurrentSchoolYear = () => {
   const now = new Date();
   const year = now.getFullYear();
-  const month = now.getMonth() + 1; // เดือน 1-12
-  // สมมติปีการศึกษาเริ่ม ต.ค. ปีที่แล้ว ถึง ก.ย. ปีนี้
+  const month = now.getMonth() + 1; 
   if (month >= 10) {
-    // เดือน ต.ค.-ธ.ค. จะถือเป็นปีการศึกษา "ปีนี้ - ปีถัดไป"
     return `${year}-${year + 1}`;
   } else {
-    // เดือน ม.ค.-ก.ย. จะถือเป็นปีการศึกษา "ปีก่อน - ปีนี้"
     return `${year - 1}-${year}`;
   }
 };
 
-// ฟังก์ชันสร้างปีการศึกษา 10 ปีย้อนหลัง
 const generateSchoolYears = () => {
   const years = [];
-  const current = getCurrentSchoolYear(); // เช่น "2025-2026"
-  const startYear = parseInt(current.split("-")[0], 10); // 2025
+  const current = getCurrentSchoolYear(); 
+  const startYear = parseInt(current.split("-")[0], 10); 
   for (let i = 0; i < 10; i++) {
     const y1 = startYear - i;
     const y2 = y1 + 1;
@@ -113,8 +107,6 @@ export default function StudentProfile() {
   };
 
   if (!profile) return <div>Loading...</div>;
-  console.log("ss", profile);
-  console.log("profile.gender =", profile.gender);
 
   return (
     <Box
@@ -122,10 +114,10 @@ export default function StudentProfile() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: 2, // ระยะห่างระหว่าง TextField
-        maxWidth: 600, // กำหนดความกว้างสูงสุดบน desktop
-        mx: "auto", // จัดให้อยู่กึ่งกลางแนวนอน
-        px: 2, // padding ซ้ายขวา เพื่อไม่ชิดขอบจอบนมือถือ
+        gap: 2, 
+        maxWidth: 600, 
+        mx: "auto", 
+        px: 2, 
       }}
       onSubmit={(e) => {
         e.preventDefault();
@@ -137,156 +129,152 @@ export default function StudentProfile() {
         ຂໍ້ມູນສ່ວນຕົວ (Personal Info)
       </Typography>
 
-      {/* Personal Info */}
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            label="ຊື່ ແລະ ນາມສະກຸນ (Lao Name)"
+            name="name"
+            value={profile.name || ""}
+            onChange={handleChange}
+            fullWidth
+            required
+            disabled={!editing}
+            multiline
+            minRows={2}
+          />
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            label="Name and Surname (English)"
+            name="name_e"
+            value={profile.name_e || ""}
+            onChange={handleChange}
+            fullWidth
+            required
+            disabled={!editing}
+            multiline
+            minRows={2}
+          />
+        </Box>
+      </Box>
 
-      <TextField
-        label="ຊື່ ແລະ ນາມສະກຸນ (Lao Name)"
-        name="name"
-        value={profile.name || ""}
-        onChange={handleChange}
-        fullWidth
-        required
-        disabled={!editing}
-        multiline
-        minRows={2}
-      />
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            label="ວັນເດືອນປີເກິດ"
+            name="dob"
+            type="date"
+            value={profile.dob || ""}
+            onChange={handleChange}
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            required
+            disabled={!editing}
+          />
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            select
+            label="ເພດ"
+            name="gender"
+            value={profile.gender || ""}
+            onChange={handleChange}
+            fullWidth
+            required
+            disabled={!editing}
+          >
+            {genders.map((g) => (
+              <MenuItem key={g.value} value={g.value}>
+                {g.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+      </Box>
 
-      <TextField
-        label="Name and Surname (English)"
-        name="name_e"
-        value={profile.name_e || ""}
-        onChange={handleChange}
-        fullWidth
-        required
-        disabled={!editing}
-        multiline
-        minRows={2}
-      />
-
-      <TextField
-        label="ວັນເດືອນປີເກິດ"
-        name="dob"
-        type="date"
-        value={profile.dob || ""}
-        onChange={handleChange}
-        fullWidth
-        InputLabelProps={{ shrink: true }}
-        required
-        disabled={!editing}
-      />
-
-      <TextField
-        select
-        label="ເພດ"
-        name="gender"
-        value={profile.gender || ""}
-        onChange={handleChange}
-        fullWidth
-        required
-        disabled={!editing}
-      >
-        {genders.map((g) => (
-          <MenuItem key={g.value} value={g.value}>
-            {g.label}
-          </MenuItem>
-        ))}
-      </TextField>
-
-      <TextField
-        label="ເບີໂທ"
-        name="phone"
-        type="tel"
-        value={profile.phone || ""}
-        onChange={handleChange}
-        fullWidth
-        required
-        disabled={!editing}
-      />
-
-      <TextField
-        label="ອີເມວຕິດຕໍ່"
-        name="email"
-        value={profile.email || ""}
-        fullWidth
-        disabled
-        multiline
-        minRows={2}
-      />
-
-      {/* Education Info */}
       <Typography variant="h6" sx={{ mt: 4 }}>
         ຂໍ້ມູນການສຶກສາ (Educational Info)
       </Typography>
 
-      <TextField
-        select
-        label="ລຸ້ນທີ"
-        name="generation_id"
-        value={profile.generation_id || ""}
-        onChange={handleChange}
-        fullWidth
-        required
-        disabled={!editing}
-      >
-        {Array.from({ length: 10 }, (_, i) => (
-          <MenuItem key={i} value={i + 1}>
-            ລຸ້ນທີ {i + 1}
-          </MenuItem>
-        ))}
-      </TextField>
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            select
+            label="ລຸ້ນທີ"
+            name="generation_id"
+            value={profile.generation_id || ""}
+            onChange={handleChange}
+            fullWidth
+            required
+            disabled={!editing}
+          >
+            {Array.from({ length: 10 }, (_, i) => (
+              <MenuItem key={i} value={i + 1}>
+                ລຸ້ນທີ {i + 1}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            select
+            label="ສາຂາ"
+            name="department_id"
+            value={profile.department_id || ""}
+            onChange={handleChange}
+            fullWidth
+            required
+            disabled={!editing}
+            multiline
+            minRows={2}
+          >
+            {dep.map((d) => (
+              <MenuItem key={d.id} value={d.id}>
+                {d.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+      </Box>
 
-      <TextField
-        select
-        label="ສາຂາ"
-        name="department_id"
-        value={profile.department_id || ""}
-        onChange={handleChange}
-        fullWidth
-        required
-        disabled={!editing}
-        multiline
-        minRows={2}
-      >
-        {dep.map((d) => (
-          <MenuItem key={d.id} value={d.id}>
-            {d.name}
-          </MenuItem>
-        ))}
-      </TextField>
-
-      <TextField
-        select
-        label="ສົກຮຽນ"
-        name="school_year"
-        value={profile.school_year || ""}
-        onChange={handleChange}
-        fullWidth
-        required
-        disabled={!editing}
-      >
-        {schoolYearOptions.map((sy) => (
-          <MenuItem key={sy} value={sy}>
-            {sy}
-          </MenuItem>
-        ))}
-      </TextField>
-
-      <TextField
-        select
-        label="ສະຖານະການສຶກສາ"
-        name="status"
-        value={profile.status || ""}
-        onChange={handleChange}
-        fullWidth
-        required
-        disabled={!editing}
-      >
-        {statuses.map((s) => (
-          <MenuItem key={s} value={s}>
-            {s}
-          </MenuItem>
-        ))}
-      </TextField>
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            select
+            label="ສົກຮຽນ"
+            name="school_year"
+            value={profile.school_year || ""}
+            onChange={handleChange}
+            fullWidth
+            required
+            disabled={!editing}
+          >
+            {schoolYearOptions.map((sy) => (
+              <MenuItem key={sy} value={sy}>
+                {sy}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            select
+            label="ສະຖານະການສຶກສາ"
+            name="status"
+            value={profile.status || ""}
+            onChange={handleChange}
+            fullWidth
+            required
+            disabled={!editing}
+          >
+            {statuses.map((s) => (
+              <MenuItem key={s} value={s}>
+                {s}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Box>
+      </Box>
 
       {profile.status === "ກຳລັງຮຽນ" && (
         <TextField
@@ -307,42 +295,49 @@ export default function StudentProfile() {
         </TextField>
       )}
 
-      {/* Address Info */}
       <Typography variant="h6" sx={{ mt: 4 }}>
         ຂໍ້ມູນທີ່ຢູ່ເກີດ (Birth Address Info)
       </Typography>
 
-      <TextField
-        label="ບ້ານ"
-        name="village"
-        value={profile.village || ""}
-        onChange={handleChange}
-        fullWidth
-        required
-        disabled={!editing}
-      />
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            label="ບ້ານ"
+            name="village"
+            value={profile.village || ""}
+            onChange={handleChange}
+            fullWidth
+            required
+            disabled={!editing}
+          />
+        </Box>
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            label="ເມືອງ"
+            name="district"
+            value={profile.district || ""}
+            onChange={handleChange}
+            fullWidth
+            required
+            disabled={!editing}
+          />
+        </Box>
+      </Box>
 
-      <TextField
-        label="ເມືອງ"
-        name="district"
-        value={profile.district || ""}
-        onChange={handleChange}
-        fullWidth
-        required
-        disabled={!editing}
-      />
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+        <Box sx={{ flex: 1 }}>
+          <TextField
+            label="ແຂວງ"
+            name="province"
+            value={profile.province || ""}
+            onChange={handleChange}
+            fullWidth
+            required
+            disabled={!editing}
+          />
+        </Box>
+      </Box>
 
-      <TextField
-        label="ແຂວງ"
-        name="province"
-        value={profile.province || ""}
-        onChange={handleChange}
-        fullWidth
-        required
-        disabled={!editing}
-      />
-
-      {/* Buttons */}
       <Box sx={{ mt: 4, textAlign: "center" }}>
         <Button variant="outlined" onClick={() => setEditing(!editing)}>
           {editing ? "Cancel" : "Edit"}

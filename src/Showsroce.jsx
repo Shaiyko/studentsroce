@@ -687,25 +687,25 @@ const handleScoreChange = (e) => {
                               <TableRow sx={{ backgroundColor: "#1976d2" }}>
                                 <TableCell
                                   align="center"
-                                  sx={{ fontWeight: "bold", color: "white" }}
+                                  sx={{ fontWeight: "bold"}}
                                 >
                                   ລ/ດ
                                 </TableCell>
                                 <TableCell
                                   align="left"
-                                  sx={{ fontWeight: "bold", color: "white" }}
+                                  sx={{ fontWeight: "bold" }}
                                 >
                                   ຊື່ວິຊາ
                                 </TableCell>
                                 <TableCell
                                   align="center"
-                                  sx={{ fontWeight: "bold", color: "white" }}
+                                  sx={{ fontWeight: "bold" }}
                                 >
                                   ຄະແນນ
                                 </TableCell>
                                 <TableCell
                                   align="left"
-                                  sx={{ fontWeight: "bold", color: "white" }}
+                                  sx={{ fontWeight: "bold" }}
                                 >
                                   ອາຈານ
                                 </TableCell>

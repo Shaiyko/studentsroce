@@ -21,12 +21,9 @@ import Swal from "sweetalert2";
 import { apisheet } from "../URL";
 import LoadingComponent from "../loding/loadinglogin";
 
-// Lazy load loading component to reduce bundle size
-
-export default function LoginRegister() {
-  const [error, setError] = useState(""); // ✅ ใส่ API URL ที่ถูกต้อง
-  // ✅ แก้ให้ตรงกับ API ที่ใช้
-  const selectedId = "1CBTOY_ONHb218cDluUtjE92KHqVyzmts4kucizDup1A"; // ✅ กำหนด ID ชีตที่ต้องการตรวจสอบ
+const LoginRegister = () => {
+  const [error, setError] = useState("");
+  const selectedId = "1CBTOY_ONHb218cDluUtjE92KHqVyzmts4kucizDup1A";
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
@@ -46,12 +43,10 @@ export default function LoginRegister() {
     e.preventDefault();
     setLoading(true);
     try {
-      // ✅ ตรวจสอบข้อมูลซ้ำใน Google Sheet
       const isUnique = await checkDuplicateAccount();
       if (!isUnique) return;
 
-      // ✅ ดึงข้อมูลจากชีตที่ตรงกัน
-      const sheetRes = await fetch(`${apisheet}/all-sheet-datas/${selectedId}`);
+      const sheetRes = await fetch(`${apisheet}/login-data/${selectedId}`);
       const allData = await sheetRes.json();
 
       let foundUser = null;
@@ -107,49 +102,48 @@ export default function LoginRegister() {
     }
   };
 
- const checkDuplicateAccount = async () => {
-  try {
-    const res = await fetch(`${apisheet}/all-sheet-datas/${selectedId}`);
-    if (!res.ok) throw new Error("Failed to fetch sheet data");
-    const allData = await res.json();
+  const checkDuplicateAccount = async () => {
+    try {
+      const res = await fetch(`${apisheet}/login-data/${selectedId}`);
+      if (!res.ok) throw new Error("Failed to fetch sheet data");
+      const allData = await res.json();
 
-    let found = false;
+      let found = false;
 
-    for (const sheet of allData) {
-      const [header, ...rows] = sheet.data;
-      const usernameIndex = header.indexOf("username");
-      const passwordIndex = header.indexOf("password");
+      for (const sheet of allData) {
+        const [header, ...rows] = sheet.data;
+        const usernameIndex = header.indexOf("username");
+        const passwordIndex = header.indexOf("password");
 
-      if (usernameIndex === -1 || passwordIndex === -1) continue;
+        if (usernameIndex === -1 || passwordIndex === -1) continue;
 
-      for (const row of rows) {
-        const user = row[usernameIndex]?.trim();
-        const pass = row[passwordIndex]?.trim();
-        if (user === username && pass === password) {
-          found = true;
-          break;
+        for (const row of rows) {
+          const user = row[usernameIndex]?.trim();
+          const pass = row[passwordIndex]?.trim();
+          if (user === username && pass === password) {
+            found = true;
+            break;
+          }
         }
+        if (found) break;
       }
-      if (found) break;
-    }
 
-    if (!found) {
-      Swal.fire({
-        icon: "error",
-        title: "Login Failed",
-        text: "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດບໍ່ຖືກຕ້ອງ",
-      });
+      if (!found) {
+        Swal.fire({
+          icon: "error",
+          title: "Login Failed",
+          text: "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດບໍ່ຖືກຕ້ອງ",
+        });
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error(err);
+      setError("Error checking account.");
       return false;
     }
-
-    return true;
-  } catch (err) {
-    console.error(err);
-    setError("Error checking account.");
-    return false;
-  }
-};
-
+  };
 
   return (
     <Container
@@ -168,7 +162,7 @@ export default function LoginRegister() {
           borderRadius: 3,
         }}
       >
-         <Suspense fallback={<div />}>
+        <Suspense fallback={<div />}>
           <LoadingComponent loading={loading} />
         </Suspense>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -256,4 +250,6 @@ export default function LoginRegister() {
       </Card>
     </Container>
   );
-}
+};
+
+export default LoginRegister;

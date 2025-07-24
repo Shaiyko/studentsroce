@@ -177,7 +177,6 @@ function Layout({ children }) {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user_sheet");
-    console.log(storedUser);
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
