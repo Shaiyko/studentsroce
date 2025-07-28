@@ -1,21 +1,16 @@
-import React, { useState, useEffect, useMemo } from "react";
-import PropTypes from "prop-types";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import {
-  Avatar,
-  Box,
-  Button,
-  CssBaseline,
-  Divider,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
-  Skeleton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import Layout from './components/Layout';
+import Login from './pages/Login';
+import Profile from './pages/Profile';
+import Dashboard from './Dashboard';
+import StudentSearchExport from './Showsroce';
+import SheetManagerC from './SheetManagerC';
+import RegisterForm from './LoginPage/Register';
+import NotFoundPage from './components/NotFoundPage';
 
+<<<<<<< HEAD
 import demoTheme from "./components/Theme";
 import Footer from "./components/Footer";
 import { NAVIGATION } from "./components/Navbar";
@@ -118,170 +113,55 @@ function SidebarFooterAccountPopover() {
 const createPreviewComponent = (mini) => {
   function PreviewComponent(props) {
     return <AccountSidebarPreview {...props} mini={mini} />;
+=======
+// Protected Route Component
+const ProtectedRoute = ({ children, requireAuth = true }) => {
+  const user = localStorage.getItem("user_sheet");
+  
+  if (requireAuth && !user) {
+    return <Navigate to="/login" replace />;
+>>>>>>> de2091fa5492ea72c1cbb63f8ba08a6e9c567383
   }
-  return PreviewComponent;
-};
-
-function SidebarFooterAccount({ mini }) {
-  const PreviewComponent = useMemo(() => createPreviewComponent(mini), [mini]);
-  return (
-    <Account
-      slots={{
-        preview: PreviewComponent,
-        popoverContent: SidebarFooterAccountPopover,
-      }}
-      slotProps={{
-        popover: {
-          transformOrigin: { horizontal: "left", vertical: "bottom" },
-          anchorOrigin: { horizontal: "right", vertical: "bottom" },
-          disableAutoFocus: true,
-          slotProps: {
-            paper: {
-              elevation: 0,
-              sx: {
-                overflow: "visible",
-                filter: (theme) =>
-                  `drop-shadow(0px 2px 8px ${
-                    theme.palette.mode === "dark"
-                      ? "rgba(255,255,255,0.10)"
-                      : "rgba(0,0,0,0.32)"
-                  })`,
-                mt: 1,
-                "&::before": {
-                  content: '""',
-                  display: "block",
-                  position: "absolute",
-                  bottom: 10,
-                  left: 0,
-                  width: 10,
-                  height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translate(-50%, -50%) rotate(45deg)",
-                  zIndex: 0,
-                },
-              },
-            },
-          },
-        },
-      }}
-    />
-  );
-}
-
-SidebarFooterAccount.propTypes = {
-  mini: PropTypes.bool.isRequired,
-};
-
-function Layout({ children }) {
-  const [session, setSession] = useState(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user_sheet");
-    if (storedUser) {
-      try {
-        const user = JSON.parse(storedUser);
-        setSession({
-          user: {
-            name: user.name || "Unknown",
-            email: user.email || "",
-            image: user.image || SV, // ใช้โลโก้ SV ถ้าไม่มีภาพ
-          },
-        });
-      } catch (err) {
-        console.error("❌ Failed to parse user_sheet:", err);
-      }
-    }
-  }, []);
-
-  const authentication = useMemo(() => {
-    return {
-      signIn: () => {
-        localStorage.removeItem("user_sheet"); // ล้างก่อน login ใหม่
-        const storedUser = localStorage.getItem("user_sheet");
-        if (storedUser) {
-          const user = JSON.parse(storedUser);
-          setSession({
-            user: {
-              name: user.name,
-              email: user.email,
-              image: user.image || SV,
-            },
-          });
-        } else {
-          window.location.href = "/login";
-        }
-      },
-      signOut: () => {
-        localStorage.removeItem("user_sheet");
-        setSession(null);
-        window.location.href = "/";
-      },
-    };
-  }, []);
-
-  return (
-    <AppProvider
-      navigation={NAVIGATION}
-      theme={demoTheme}
-      branding={{
-        logo: (
-          <img src={SV} alt="SV logo" width={40} height={40} loading="lazy" />
-        ),
-        title: "Sengsavanh",
-        homeUrl: "/",
-      }}
-      authentication={authentication}
-      session={session}
-    >
-      <DashboardLayout
-        slots={{
-          sidebarFooter: SidebarFooterAccount,
-        }}
-      >
-        <Box
-          sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
-        >
-          <CssBaseline />
-          <PageContainer>
-            <SkeletonLoader>{children}</SkeletonLoader>
-          </PageContainer>
-          <Footer />
-        </Box>
-      </DashboardLayout>
-    </AppProvider>
-  );
-}
-
-function SkeletonLoader({ children }) {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false));
-    return () => clearTimeout(timeout);
-  }, []);
-
-  if (loading) {
-    return (
-      <Box sx={{ padding: 2 }}>
-        <Skeleton
-          variant="rectangular"
-          width="100%"
-          height={50}
-          sx={{ marginBottom: 2 }}
-        />
-        <Skeleton variant="rectangular" width="100%" height={300} />
-      </Box>
-    );
+  
+  if (!requireAuth && user) {
+    return <Navigate to="/" replace />;
   }
-
+  
   return children;
-}
+};
 
-export default function App() {
+function App() {
   return (
     <Router>
-      <Layout>
+      <div className="App">
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+              fontFamily: 'NotoSansLaoLooped, sans-serif',
+            },
+            success: {
+              duration: 3000,
+              iconTheme: {
+                primary: '#4ade80',
+                secondary: '#fff',
+              },
+            },
+            error: {
+              duration: 4000,
+              iconTheme: {
+                primary: '#ef4444',
+                secondary: '#fff',
+              },
+            },
+          }}
+        />
+        
         <Routes>
+<<<<<<< HEAD
           <Route path="/" element={<Dashboard />} />
           <Route path="/score" element={<StudentSearchExport />} />
           <Route path="/scores" element={<StudentSearchExporttest />} />
@@ -306,9 +186,65 @@ export default function App() {
           <Route
             path="*"
             element={<NotFoundPage message="404: page not found" />}
+=======
+          {/* Public routes */}
+          <Route 
+            path="/login" 
+            element={
+              <ProtectedRoute requireAuth={false}>
+                <Login />
+              </ProtectedRoute>
+            } 
           />
+          <Route 
+            path="/register" 
+            element={
+              <ProtectedRoute requireAuth={false}>
+                <RegisterForm />
+              </ProtectedRoute>
+            } 
+>>>>>>> de2091fa5492ea72c1cbb63f8ba08a6e9c567383
+          />
+          
+          {/* Protected routes with layout */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Layout>
+                <Dashboard />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/score" element={
+            <ProtectedRoute>
+              <Layout>
+                <StudentSearchExport />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/credit-recovery" element={
+            <ProtectedRoute>
+              <Layout>
+                <SheetManagerC />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <Layout>
+                <Profile />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          
+          {/* 404 route */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </Layout>
+      </div>
     </Router>
   );
 }
+
+export default App;
