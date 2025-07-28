@@ -31,9 +31,9 @@ import {
 
 import { AppProvider, DashboardLayout, PageContainer } from "@toolpad/core";
 import StudentSearchExporttest from "./Showsrocetest";
-import Cacklogin from "./components/cacklogin";
 import CrudCreate from "./test/regis";
 import NotFoundPage from "./components/Notfoundpage";
+import Cacklogin from "./components/cacklogin";
 import StudentProfile from "./loginpage/profire";
 
 // Lazy loaded pages
@@ -289,19 +289,18 @@ export default function App() {
           <Route path="/credit-recovery" element={<SheetManagerC />} />
           <Route path="/register" element={<RegisterForm />} />
 
-          <Route
-            path="/profire"
-            element={<Cacklogin element={<StudentProfile />} path="/profire" />}
-          />
+          // For single route protection (your current usage)
+<Route
+  path="/profire"
+  element={<Cacklogin element={<StudentProfile />} />}
+/>
 
-          <Route path="/admin/*" element={<Cacklogin path="/admin" />}>
-            <Route path="people" element={<CrudCreate />} />
-            <Route path="cc" element={<div>CC Page</div>} />
-            <Route
-              path="*"
-              element={<NotFoundPage message="404: admin sub-page not found" />}
-            />
-          </Route>
+// For nested routes (your admin routes)
+<Route path="/admin/*" element={<Cacklogin />}>
+  <Route path="people" element={<CrudCreate />} />
+  <Route path="cc" element={<div>CC Page</div>} />
+  <Route path="*" element={<NotFoundPage message="404: admin sub-page not found" />} />
+</Route>
 
           {/* ✅ จับทุก route ที่ไม่มี match ด้านบน */}
           <Route

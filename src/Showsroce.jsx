@@ -146,7 +146,7 @@ export default function StudentSearchExport() {
       const result = await response.json();
 
       if (result.success) {
-        showSnackbar("ລ້າງ Cache ສຳເລັດ, ກำลังໂຫລດຂໍ້ມູນໃໝ່...", "success");
+        showSnackbar("ລ້າງ Cache ສຳເລັດ, ກำລังໂຫລດຂໍ້ມູນໃໝ່...", "success");
         await fetchAllData(); // Use fetchAllData instead of undefined loadData
       } else {
         showSnackbar("ການລ້າງ Cache ຜິດພາດ", "error");
@@ -274,8 +274,12 @@ export default function StudentSearchExport() {
           ...student,
           subjects: student.subjects.filter((subject) => {
             const subjectName = subject.subject_name.toLowerCase();
+
             const hasScore =
-              subject.score !== "" && subject.score !== "ຍັງບໍ່ມີຄະແນນ";
+              subject.score !== "" &&
+              subject.score !== "ຍັງບໍ່ມີຄະແນນ" &&
+              subject.grade !== "" &&
+              subject.grade !== "ຍັງບໍ່ມີຄະແນນ";
             const matchCheckbox =
               (hasScore && showWithScore) || (!hasScore && showWithoutScore);
             const matchSubject =
@@ -306,21 +310,22 @@ export default function StudentSearchExport() {
     }
   };
 
-const handleScoreChange = (e) => {
-  let value = e.target.value.toUpperCase().replace(/\s+/g, "");
+  const handleScoreChange = (e) => {
+    let value = e.target.value.toUpperCase().replace(/\s+/g, "");
 
-  // ?แยกตัวอักษรโดยไม่เอา , 
-  const rawChars = value.replace(/,/g, "").split("");
+    // แยกตัวอักษรโดยไม่เอา ,
+    const rawChars = value.replace(/,/g, "").split("");
 
-  // กรองเฉพาะ 1-4 และ I
-  const validChars = rawChars.filter((char) => ["1", "2", "3", "4", "I"].includes(char));
+    // กรองเฉพาะ 1-4 และ I
+    const validChars = rawChars.filter((char) =>
+      ["1", "2", "3", "4", "I"].includes(char)
+    );
 
-  // สร้าง string ใหม่พร้อมใส่ , ทุกตัว
-  const formatted = validChars.join(",");
+    // สร้าง string ใหม่พร้อมใส่ , ทุกตัว
+    const formatted = validChars.join(",");
 
-  setFilters({ ...filters, score: formatted });
-};
-
+    setFilters({ ...filters, score: formatted });
+  };
 
   const getAvailableClassrooms = () => {
     if (!filters.department_id) return [];
@@ -329,6 +334,202 @@ const handleScoreChange = (e) => {
       .map((key) => key.split("|")[1])
       .sort((a, b) => a - b);
     return [...new Set(available)]; // Ensure unique values
+  };
+
+  // Helper function to render student info card
+  const renderStudentInfoCard = (student, index) => {
+    // Calculate grade statistics
+    const validSubjects = student.subjects.filter(subject => 
+      subject.score !== "" && 
+      subject.score !== "ຍັງບໍ່ມີຄະແນນ" && 
+      subject.score !== "I" &&
+      subject.grade !== "" && 
+      subject.grade !== "ຍັງບໍ່ມີຄະແນນ" && 
+      subject.grade !== "I"
+    );
+
+    const incompleteSubjects = student.subjects.filter(subject => 
+      subject.score === "I" || subject.grade === "I"
+    );
+
+    // Count letter grades
+    const gradeCount = validSubjects.reduce((acc, subject) => {
+      const grade = subject.grade;
+      acc[grade] = (acc[grade] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Calculate numerical average
+    const numericalScores = validSubjects
+      .map(subject => parseFloat(subject.score))
+      .filter(score => !isNaN(score));
+    
+    const averageScore = numericalScores.length > 0 
+      ? (numericalScores.reduce((sum, score) => sum + score, 0) / numericalScores.length).toFixed(2)
+      : 0;
+
+    // Get highest and lowest scores
+    const highestScore = numericalScores.length > 0 ? Math.max(...numericalScores) : 0;
+    const lowestScore = numericalScores.length > 0 ? Math.min(...numericalScores) : 0;
+
+    return (
+      <Card key={`student-info-${index}`} sx={{ mb: 3, boxShadow: 3 }}>
+        <CardContent>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              mb: 2,
+            }}
+          >
+            <PersonIcon color="primary" sx={{ fontSize: 40 }} />
+            <Typography variant="h5" color="primary">
+              ຂໍ້ມູນນັກສຶກສາ
+            </Typography>
+          </Box>
+          <Divider sx={{ mb: 2 }} />
+          
+          {/* Basic Student Info */}
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            <Grid item xs={12} sm={4}>
+              <Typography variant="h6">
+                <strong>ຊື່: </strong>
+                {student.name}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Typography variant="h6">
+                <strong>ຫ້ອງຮຽນ: </strong>
+                {student.classroom_id}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Typography variant="h6">
+                <strong>ສາຂາວິຊາ: </strong>
+                {deps.find(
+                  (dep) => String(dep.id) === student.department_id
+                )?.name || "ບໍ່ພົບຂໍ້ມູນ"}
+              </Typography>
+            </Grid>
+          </Grid>
+
+          <Divider sx={{ mb: 2 }} />
+
+          {/* Grade Statistics Section */}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="h6" color="primary" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <GradeIcon />
+              ສະຫຼຸບຜົນການຮຽນ
+            </Typography>
+            
+            <Grid container spacing={3}>
+              {/* Numerical Statistics */}
+              <Grid item xs={12} md={6}>
+                <Card variant="outlined" sx={{ p: 2, backgroundColor: '#f8f9fa' }}>
+                  <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
+                    ສະຖິຕິຄະແນນຕົວເລກ:
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Typography>
+                      <strong>ຄະແນນສະເລ່ຍ:</strong> <Chip label={averageScore} color="primary" size="small" />
+                    </Typography>
+                    <Typography>
+                      <strong>ຄະແນນສູງສຸດ:</strong> <Chip label={highestScore} color="success" size="small" />
+                    </Typography>
+                    <Typography>
+                      <strong>ຄະແນນຕ່ຳສຸດ:</strong> <Chip label={lowestScore} color="warning" size="small" />
+                    </Typography>
+                    <Typography>
+                      <strong>ວິຊາທີ່ມີຄະແນນ:</strong> <Chip label={validSubjects.length} color="info" size="small" />
+                    </Typography>
+                    {incompleteSubjects.length > 0 && (
+                      <Typography>
+                        <strong>ວິຊາທີ່ຍັງບໍ່ສໍາເລັດ (I):</strong> <Chip label={incompleteSubjects.length} color="error" size="small" />
+                      </Typography>
+                    )}
+                  </Box>
+                </Card>
+              </Grid>
+
+              {/* Letter Grade Distribution */}
+              <Grid item xs={12} md={6}>
+                <Card variant="outlined" sx={{ p: 2, backgroundColor: '#f8f9fa' }}>
+                  <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
+                    ການແຈກຢາຍເກດ:
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    {Object.entries(gradeCount)
+                      .sort(([a], [b]) => {
+                        const gradeOrder = { 'A': 1, 'B+': 2, 'B': 3, 'C+': 4, 'C': 5, 'D+': 6, 'D': 7, 'F': 8 };
+                        return (gradeOrder[a] || 9) - (gradeOrder[b] || 9);
+                      })
+                      .map(([grade, count]) => {
+                        let chipColor = 'default';
+                        if (grade === 'A') chipColor = 'success';
+                        else if (grade.startsWith('B')) chipColor = 'primary';
+                        else if (grade.startsWith('C')) chipColor = 'warning';
+                        else if (grade.startsWith('D') || grade === 'F') chipColor = 'error';
+
+                        return (
+                          <Chip
+                            key={grade}
+                            label={`${grade}: ${count}`}
+                            color={chipColor}
+                            variant="outlined"
+                            size="small"
+                          />
+                        );
+                      })}
+                  </Box>
+                  
+                  {/* Show incomplete subjects if any */}
+                  {incompleteSubjects.length > 0 && (
+                    <Box sx={{ mt: 1 }}>
+                      <Chip
+                        label={`I: ${incompleteSubjects.length}`}
+                        color="error"
+                        variant="filled"
+                        size="small"
+                      />
+                    </Box>
+                  )}
+                </Card>
+              </Grid>
+
+              {/* Overall Performance Indicator */}
+              <Grid item xs={12}>
+                <Card variant="outlined" sx={{ p: 2, backgroundColor: '#e8f5e8' }}>
+                  <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
+                    ການປະເມີນໂດຍລວມ:
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                    <Chip
+                      label={
+                        averageScore >= 3.5 ? 'ດີເລີດ' :
+                        averageScore >= 3.0 ? 'ດີ' :
+                        averageScore >= 2.5 ? 'ປານກາງ' :
+                        averageScore >= 2.0 ? 'ຜ່ານ' : 'ຕ້ອງປັບປຸງ'
+                      }
+                      color={
+                        averageScore >= 3.5 ? 'success' :
+                        averageScore >= 3.0 ? 'primary' :
+                        averageScore >= 2.5 ? 'warning' :
+                        averageScore >= 2.0 ? 'info' : 'error'
+                      }
+                      sx={{ fontWeight: 'bold' }}
+                    />
+                    <Typography variant="body2" color="text.secondary">
+                      ຈາກທັງໝົດ {student.subjects.length} ວິຊາ
+                    </Typography>
+                  </Box>
+                </Card>
+              </Grid>
+            </Grid>
+          </Box>
+        </CardContent>
+      </Card>
+    );
   };
 
   // --- JSX Rendering ---
@@ -428,7 +629,11 @@ const handleScoreChange = (e) => {
               <Grid container spacing={3}>
                 {/* Field 1: สาขาวิชา */}
                 <Grid item xs={12}>
-                  <FormControl fullWidth sx={{minWidth: 300}} error={!!errorMessages.department}>
+                  <FormControl
+                    fullWidth
+                    sx={{ minWidth: 300 }}
+                    error={!!errorMessages.department}
+                  >
                     <InputLabel>ສາຂາວິຊາ</InputLabel>
                     <Select
                       value={filters.department_id}
@@ -464,7 +669,11 @@ const handleScoreChange = (e) => {
 
                 {/* Field 2: ຫ້ອງ */}
                 <Grid item xs={12}>
-                  <FormControl fullWidth sx={{minWidth: 170}} error={!!errorMessages.classroom}>
+                  <FormControl
+                    fullWidth
+                    sx={{ minWidth: 170 }}
+                    error={!!errorMessages.classroom}
+                  >
                     <InputLabel>ຫ້ອງ</InputLabel>
                     <Select
                       value={filters.classroom_id}
@@ -499,7 +708,7 @@ const handleScoreChange = (e) => {
                 {/* Field 3: ຊື່ນັກສຶກສາ */}
                 <Grid item xs={12}>
                   <Autocomplete
-                  sx={{minWidth: 300}}
+                    sx={{ minWidth: 300 }}
                     freeSolo
                     options={students}
                     value={filters.student}
@@ -617,52 +826,9 @@ const handleScoreChange = (e) => {
                 {filteredStudents.length > 0 ? (
                   <>
                     {/* Student Info Card */}
-                    {filteredStudents.slice(0, 1).map((student, i) => (
-                      <Card
-                        key={`student-info-${i}`}
-                        sx={{ mb: 3, boxShadow: 3 }}
-                      >
-                        <CardContent>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 2,
-                              mb: 2,
-                            }}
-                          >
-                            <PersonIcon color="primary" sx={{ fontSize: 40 }} />
-                            <Typography variant="h5" color="primary">
-                              ຂໍ້ມູນນັກສຶກສາ
-                            </Typography>
-                          </Box>
-                          <Divider sx={{ mb: 2 }} />
-                          <Grid container spacing={2}>
-                            <Grid item xs={12} sm={4}>
-                              <Typography variant="h6">
-                                <strong>ຊື່: </strong>
-                                {student.name}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={12} sm={4}>
-                              <Typography variant="h6">
-                                <strong>ຫ້ອງຮຽນ: </strong>
-                                {student.classroom_id}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={12} sm={4}>
-                              <Typography variant="h6">
-                                <strong>ສາຂາວິຊາ: </strong>
-                                {deps.find(
-                                  (dep) =>
-                                    String(dep.id) === student.department_id
-                                )?.name || "ບໍ່ພົບຂໍ້ມູນ"}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                        </CardContent>
-                      </Card>
-                    ))}
+                    {filteredStudents.slice(0, 1).map((student, i) => 
+                      renderStudentInfoCard(student, i)
+                    )}
 
                     {/* Scores Table */}
                     <Card component={Paper} sx={{ boxShadow: 3 }}>
@@ -687,25 +853,31 @@ const handleScoreChange = (e) => {
                               <TableRow sx={{ backgroundColor: "#1976d2" }}>
                                 <TableCell
                                   align="center"
-                                  sx={{ fontWeight: "bold"}}
+                                  sx={{ fontWeight: "bold", color: "white" }}
                                 >
                                   ລ/ດ
                                 </TableCell>
                                 <TableCell
                                   align="left"
-                                  sx={{ fontWeight: "bold" }}
+                                  sx={{ fontWeight: "bold", color: "white" }}
                                 >
                                   ຊື່ວິຊາ
                                 </TableCell>
                                 <TableCell
                                   align="center"
-                                  sx={{ fontWeight: "bold" }}
+                                  sx={{ fontWeight: "bold", color: "white" }}
                                 >
                                   ຄະແນນ
                                 </TableCell>
                                 <TableCell
+                                  align="center"
+                                  sx={{ fontWeight: "bold", color: "white" }}
+                                >
+                                  Grade
+                                </TableCell>
+                                <TableCell
                                   align="left"
-                                  sx={{ fontWeight: "bold" }}
+                                  sx={{ fontWeight: "bold", color: "white" }}
                                 >
                                   ອາຈານ
                                 </TableCell>
@@ -746,6 +918,28 @@ const handleScoreChange = (e) => {
                                         variant={
                                           subject.score === "" ||
                                           subject.score === "ຍັງບໍ່ມີຄະແນນ"
+                                            ? "outlined"
+                                            : "filled"
+                                        }
+                                      />
+                                    </TableCell>
+                                    <TableCell align="center">
+                                      <Chip
+                                        label={
+                                          subject.grade === "" ||
+                                          subject.grade === "ຍັງບໍ່ມີຄະແນນ"
+                                            ? "ຍັງບໍ່ມີຄະແນນ"
+                                            : subject.grade
+                                        }
+                                        color={
+                                          subject.grade === "" ||
+                                          subject.grade === "ຍັງບໍ່ມີຄະແນນ"
+                                            ? "default"
+                                            : "secondary"
+                                        }
+                                        variant={
+                                          subject.grade === "" ||
+                                          subject.grade === "ຍັງບໍ່ມີຄະແນນ"
                                             ? "outlined"
                                             : "filled"
                                         }
