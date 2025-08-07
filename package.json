@@ -10,23 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.5",
-    "@heroicons/react": "^2.2.0",
-    "autoprefixer": "^10.4.21",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.0.2",
+    "@mui/material": "^7.0.2",
+    "@toolpad/core": "^0.15.0",
     "axios": "^1.9.0",
     "firebase": "^11.7.3",
-<<<<<<< HEAD
     "lucide-react": "^0.526.0",
-=======
-    "lucide-react": "^0.525.0",
-    "postcss": "^8.5.6",
->>>>>>> de2091fa5492ea72c1cbb63f8ba08a6e9c567383
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-hot-toast": "^2.5.2",
     "react-router-dom": "^7.5.3",
-    "sweetalert2": "^11.21.0",
-    "tailwindcss": "^4.1.11"
+    "sweetalert2": "^11.21.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
