@@ -21,7 +21,7 @@ import {
   FormGroup,
   Box,
 } from "@mui/material";
-import SkeletonLoaderComponent from "./loding/loading";
+import SkeletonLoaderComponent from "./loding/loading.jsx";
 
 const deps = [
   {

@@ -426,7 +426,7 @@ export default function StudentSearchExport() {
             <Grid container spacing={3}>
               {/* Numerical Statistics */}
               <Grid item xs={12} md={6}>
-                <Card variant="outlined" sx={{ p: 2, backgroundColor: '#f8f9fa' }}>
+                <Card variant="outlined" sx={{ p: 2, backgroundColor: '#f8f9fa' ,color:"black"}}>
                   <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
                     ສະຖິຕິຄະແນນຕົວເລກ:
                   </Typography>
@@ -454,7 +454,7 @@ export default function StudentSearchExport() {
 
               {/* Letter Grade Distribution */}
               <Grid item xs={12} md={6}>
-                <Card variant="outlined" sx={{ p: 2, backgroundColor: '#f8f9fa' }}>
+                <Card variant="outlined" sx={{ p: 2, backgroundColor: '#f8f9fa' ,color:"black"}}>
                   <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
                     ການແຈກຢາຍເກດ:
                   </Typography>
@@ -499,7 +499,7 @@ export default function StudentSearchExport() {
 
               {/* Overall Performance Indicator */}
               <Grid item xs={12}>
-                <Card variant="outlined" sx={{ p: 2, backgroundColor: '#e8f5e8' }}>
+                <Card variant="outlined" sx={{ p: 2, backgroundColor: '#e8f5e8' ,color:"black"}}>
                   <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
                     ການປະເມີນໂດຍລວມ:
                   </Typography>
@@ -519,7 +519,7 @@ export default function StudentSearchExport() {
                       }
                       sx={{ fontWeight: 'bold' }}
                     />
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{color:"black"}}>
                       ຈາກທັງໝົດ {student.subjects.length} ວິຊາ
                     </Typography>
                   </Box>
@@ -853,31 +853,31 @@ export default function StudentSearchExport() {
                               <TableRow sx={{ backgroundColor: "#1976d2" }}>
                                 <TableCell
                                   align="center"
-                                  sx={{ fontWeight: "bold", color: "white" }}
+                                  sx={{ fontWeight: "bold", color: "black" }}
                                 >
                                   ລ/ດ
                                 </TableCell>
                                 <TableCell
                                   align="left"
-                                  sx={{ fontWeight: "bold", color: "white" }}
+                                  sx={{ fontWeight: "bold", color: "black" }}
                                 >
                                   ຊື່ວິຊາ
                                 </TableCell>
                                 <TableCell
                                   align="center"
-                                  sx={{ fontWeight: "bold", color: "white" }}
+                                  sx={{ fontWeight: "bold", color: "black" }}
                                 >
                                   ຄະແນນ
                                 </TableCell>
                                 <TableCell
                                   align="center"
-                                  sx={{ fontWeight: "bold", color: "white" }}
+                                  sx={{ fontWeight: "bold", color: "black" }}
                                 >
                                   Grade
                                 </TableCell>
                                 <TableCell
                                   align="left"
-                                  sx={{ fontWeight: "bold", color: "white" }}
+                                  sx={{ fontWeight: "bold", color: "black" }}
                                 >
                                   ອາຈານ
                                 </TableCell>
