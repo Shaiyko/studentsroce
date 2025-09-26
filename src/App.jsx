@@ -35,6 +35,7 @@ import CrudCreate from "./test/regis";
 import NotFoundPage from "./components/Notfoundpage";
 import Cacklogin from "./components/cacklogin";
 import StudentProfile from "./loginpage/profire";
+import StudentSearchApp from "./Showsroceappsheets";
 
 // Lazy loaded pages
 const RegisterForm = React.lazy(() => import("./loginpage/Register"));
@@ -283,7 +284,7 @@ export default function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/score" element={<StudentSearchExport />} />
+          <Route path="/score" element={<StudentSearchApp />} />
           <Route path="/scores" element={<StudentSearchExporttest />} />
           <Route path="/login" element={<LoginRegister />} />
           <Route path="/credit-recovery" element={<SheetManagerC />} />
